@@ -1,0 +1,32 @@
+{
+  "name": "@cjr-unb/nestjs-autho",
+  "version": "1.0.0",
+  "description": "Module for authorization in NestJS built with CASL",
+  "author": "Edson Sales",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf dist && tsc"
+  },
+  "dependencies": {
+    "@casl/ability": "^6.5.0",
+    "@casl/prisma": "^1.4.0",
+    "@nestjs/common": "^9.4.2",
+    "@prisma/client": "^4.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "rimraf": "^5.0.1",
+    "typescript": "^5.1.3"
+  },
+  "keywords": [
+    "nest",
+    "nestjs",
+    "casl",
+    "prisma",
+    "authorization",
+    "module",
+    "autho"
+  ]
+}
