@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
-import { ModuleOptions, RulesFunction } from "./casl.types";
+import { ModuleOptions } from "./casl.types";
 import { AbilityCheckerBuilder } from "./casl.wrappers";
 
 @Module({})
@@ -10,12 +10,15 @@ export class AuthoModule {
   ): DynamicModule {
     return {
       module: AuthoModule,
-      imports: [options.PrismaModule],
       providers: [
         {
           provide: "AUTHO_MODULE_OPTIONS",
           useValue: options,
         },
+        {
+          provide: "PrismaService",
+          useExisting: options.PrismaService
+        }
       ],
       exports: [
         {
@@ -28,7 +31,7 @@ export class AuthoModule {
 }
 
 const authoModule = AuthoModule.forRoot<{id:number}>({
-  PrismaModule: undefined,
+  PrismaService: PrismaClient,
   rulesFunction: (can, cannot, user) =>{
     can('update', 'user', {id: user.id})
   }

@@ -15,7 +15,7 @@ export function Ability(
     resourceParamName,
   };
   return applyDecorators(
-    SetMetadata("NESTJS_AUTHO_ABILITY", AbilityMetadata),
+    SetMetadata("AUTHO_ABILITY", AbilityMetadata),
     UseGuards(AbilityGuard)
   );
 }
