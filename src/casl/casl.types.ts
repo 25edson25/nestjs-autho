@@ -1,4 +1,3 @@
-import { AbilityBuilder } from "@casl/ability";
 import { PrismaClient } from "@prisma/client";
 
 export type Actions = "manage" | "create" | "read" | "update" | "delete";
@@ -17,8 +16,14 @@ export type Entities = {
 
 export type EntitiesNames = keyof Entities;
 
-export type WrappersFunction = <EntityName extends EntitiesNames>(
+type WrappersFunction = <EntityName extends EntitiesNames>(
   action: Actions,
   resourceName: EntityName,
   resource?: Partial<Entities[EntityName]>
 ) => any;
+
+export type RulesFunction<JwtPayload> = (
+  can: WrappersFunction,
+  cannot: WrappersFunction,
+  user: JwtPayload
+) => void;

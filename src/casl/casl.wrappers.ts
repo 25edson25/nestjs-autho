@@ -1,18 +1,16 @@
-import { AbilityBuilder } from "@casl/ability";
-import {
-  Actions,
-  Entities,
-  EntitiesNames,
-  WrappersFunction,
-} from "./casl.types";
+import { AbilityBuilder, subject } from "@casl/ability";
+import { Actions, Entities, EntitiesNames, RulesFunction } from "./casl.types";
 import { createPrismaAbility } from "@casl/prisma";
 
-class Wrapper {
+class AbilityCheckerBuilder<JwtPayload> {
   can: Function;
   cannot: Function;
   build: Function;
 
-  constructor() {
+  constructor(
+    private readonly user: JwtPayload,
+    private readonly rulesFunction: RulesFunction<JwtPayload>
+  ) {
     const { can, cannot, build } = new AbilityBuilder(createPrismaAbility);
 
     this.can = can;
@@ -36,15 +34,12 @@ class Wrapper {
     return this.cannot(action, resourceName, resource);
   }
 
-  public abilityCheckerBuilder(
-    rules: (can: WrappersFunction, cannot: WrappersFunction) => void
-  ) {
-    rules(this.canWrapper, this.cannotWrapper);
+  public buildChecker() {
+    this.rulesFunction(
+      this.canWrapper.bind(this),
+      this.cannotWrapper.bind(this),
+      this.user
+    );
     return this.build();
   }
 }
-
-const wrapper = new Wrapper();
-wrapper.abilityCheckerBuilder((can, cannot) => {
-    
-});
