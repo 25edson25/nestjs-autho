@@ -1,8 +1,8 @@
-import { AbilityBuilder, subject } from "@casl/ability";
+import { AbilityBuilder } from "@casl/ability";
 import { Actions, Entities, EntitiesNames, RulesFunction } from "./casl.types";
 import { createPrismaAbility } from "@casl/prisma";
 
-class AbilityCheckerBuilder<JwtPayload> {
+export class AbilityCheckerBuilder<JwtPayload> {
   can: Function;
   cannot: Function;
   build: Function;
