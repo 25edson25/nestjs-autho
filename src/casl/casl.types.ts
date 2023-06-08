@@ -36,4 +36,5 @@ export type AbilityMetadata = {
   action: Actions;
   resourceName: EntitiesNames;
   possession: "own" | "any";
+  resourceParamName?: string;
 }

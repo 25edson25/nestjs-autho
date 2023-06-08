@@ -9,7 +9,7 @@ import { Reflector } from "@nestjs/core";
 import { PrismaClient } from "@prisma/client";
 import { subject } from "@casl/ability";
 
-class AbilityGuard<JwtPayload> implements CanActivate {
+export class AbilityGuard<JwtPayload> implements CanActivate {
   constructor(
     @Inject("AbilityCheckerBuilderProvider")
     private readonly abilityCheckerBuilderProvider: AbilityCheckerBuilderInterface<JwtPayload>,
@@ -19,13 +19,15 @@ class AbilityGuard<JwtPayload> implements CanActivate {
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const resourceId: number = +request.params?.id;
     const user: JwtPayload = request.user;
 
-    const { action, resourceName, possession } = this.reflector.get(
-      "ABILITY",
-      context.getHandler()
-    ) as AbilityMetadata;
+    const { action, resourceName, possession, resourceParamName } =
+      this.reflector.get(
+        "NESTJS_AUTHO_ABILITY",
+        context.getHandler()
+      ) as AbilityMetadata;
+
+    const resourceId: number = +request.params[resourceParamName];
 
     const resource =
       possession === "own"
