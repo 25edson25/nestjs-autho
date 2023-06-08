@@ -3,19 +3,28 @@ import { AbilityCheckerBuilder } from "./casl.wrappers";
 import { RulesFunction } from "./casl.types";
 
 export function AuthoModule<JwtPayload>(args: {
-  userProperty?: string;
   rulesFunction: RulesFunction<JwtPayload>;
 }) {
-
-  const AbilityCheckerBuilderProvider = AbilityCheckerBuilder<JwtPayload>(args.rulesFunction)
+  const AbilityCheckerBuilderProvider = AbilityCheckerBuilder<JwtPayload>(
+    args.rulesFunction
+  );
 
   @Global()
   @Module({
-    providers: [AbilityCheckerBuilderProvider],
-    exports: [AbilityCheckerBuilderProvider],
+    providers: [
+      {
+        provide: "AbilityCheckerBuilderProvider",
+        useClass: AbilityCheckerBuilderProvider,
+      },
+    ],
+    exports: [
+      {
+        provide: "AbilityCheckerBuilderProvider",
+        useClass: AbilityCheckerBuilderProvider,
+      },
+    ],
   })
   class CaslModule {}
 
   return CaslModule;
 }
-

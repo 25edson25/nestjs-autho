@@ -1,11 +1,13 @@
 import { AbilityBuilder } from "@casl/ability";
-import { Actions, Entities, EntitiesNames, RulesFunction } from "./casl.types";
+import { AbilityCheckerBuilderInterface, Actions, Entities, EntitiesNames, RulesFunction } from "./casl.types";
 import { createPrismaAbility } from "@casl/prisma";
+import { Injectable } from "@nestjs/common";
 
 export function AbilityCheckerBuilder<JwtPayload>(
   rulesFunction: RulesFunction<JwtPayload>
 ) {
-  return class AbilityCheckerBuilderClass {
+  @Injectable()
+  class AbilityCheckerBuilderClass implements AbilityCheckerBuilderInterface<JwtPayload> {
     readonly can: Function;
     readonly cannot: Function;
     readonly build: Function;
@@ -34,7 +36,7 @@ export function AbilityCheckerBuilder<JwtPayload>(
       return this.cannot(action, resourceName, resource);
     }
 
-    public buildFor(user: JwtPayload) {
+    buildFor(user: JwtPayload) {
       rulesFunction(
         this.canWrapper.bind(this),
         this.cannotWrapper.bind(this),
@@ -42,5 +44,7 @@ export function AbilityCheckerBuilder<JwtPayload>(
       );
       return this.build();
     }
-  };
+  }
+
+  return AbilityCheckerBuilderClass;
 }

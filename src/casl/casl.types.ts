@@ -27,3 +27,7 @@ export type RulesFunction<JwtPayload> = (
   cannot: WrappersFunction,
   user: JwtPayload
 ) => void;
+
+export interface AbilityCheckerBuilderInterface<JwtPayload> {
+  buildFor(user: JwtPayload);
+}
