@@ -2,7 +2,7 @@ import { Global, Module } from "@nestjs/common";
 import { AbilityCheckerBuilder } from "./casl.wrappers";
 import { RulesFunction } from "./casl.types";
 
-export function AuthoModule<JwtPayload>(args: {
+export function NestjsAuthoModule<JwtPayload>(args: {
   rulesFunction: RulesFunction<JwtPayload>;
 }) {
   const AbilityCheckerBuilderProvider = AbilityCheckerBuilder<JwtPayload>(
