@@ -1,6 +1,7 @@
 import { SetMetadata, UseGuards, applyDecorators } from "@nestjs/common";
 import { AbilityMetadata, Actions, EntitiesNames } from "../casl.types";
 import { AbilityGuard } from "../guards/ability.guard";
+import { ABILITY_METADATA } from "../casl.constants";
 
 export function Ability(
   action: Actions,
@@ -15,7 +16,7 @@ export function Ability(
     resourceParamName,
   };
   return applyDecorators(
-    SetMetadata("AUTHO_ABILITY", AbilityMetadata),
+    SetMetadata(ABILITY_METADATA, AbilityMetadata),
     UseGuards(AbilityGuard)
   );
 }

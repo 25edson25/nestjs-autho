@@ -28,8 +28,8 @@ export type RulesFunction<JwtPayload> = (
   user: JwtPayload
 ) => void;
 
-export interface AbilityCheckerBuilderInterface<JwtPayload> {
-  buildFor(user: JwtPayload);
+export interface AbilityCheckerBuilderInterface {
+  buildFor(user: any);
 }
 
 export type AbilityMetadata = {

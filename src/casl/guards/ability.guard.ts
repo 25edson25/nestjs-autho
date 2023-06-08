@@ -12,24 +12,26 @@ import {
 import { Reflector } from "@nestjs/core";
 import { subject } from "@casl/ability";
 import { PrismaClient } from "@prisma/client";
+import { ABILITY_METADATA, PROVIDERS } from "../casl.constants";
 
-export class AbilityGuard<JwtPayload> implements CanActivate {
+export class AbilityGuard implements CanActivate {
   constructor(
-    @Inject("AbilityCheckerBuilder")
-    private readonly abilityCheckerBuilderProvider: AbilityCheckerBuilderInterface<JwtPayload>,
-    @Inject("AUTHO_MODULE_OPTIONS")
-    private readonly moduleOptions: ModuleOptions<JwtPayload>,
-    @Inject("PrismaService") private readonly prismaService: PrismaClient,
+    @Inject(PROVIDERS.ABILITY_CHECKER_BUILDER)
+    private readonly abilityCheckerBuilder: AbilityCheckerBuilderInterface,
+    @Inject(PROVIDERS.MODULE_OPTIONS)
+    private readonly moduleOptions: ModuleOptions<any>,
+    @Inject(PROVIDERS.PRISMA_SERVICE)
+    private readonly prismaService: PrismaClient,
     @Inject(Reflector) private readonly reflector: Reflector
   ) {}
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const user: JwtPayload = request[this.moduleOptions.userProperty];
+    const user = request[this.moduleOptions.userProperty];
 
     const { action, resourceName, possession, resourceParamName } =
       this.reflector.get(
-        "AUTHO_ABILITY",
+        ABILITY_METADATA,
         context.getHandler()
       ) as AbilityMetadata;
 
@@ -44,7 +46,7 @@ export class AbilityGuard<JwtPayload> implements CanActivate {
 
     if (!resource) throw new NotFoundException(`${resourceName} not found`);
 
-    const abilityChecker = this.abilityCheckerBuilderProvider.buildFor(user);
+    const abilityChecker = this.abilityCheckerBuilder.buildFor(user);
 
     return abilityChecker.can(action, subject(resourceName, resource));
   }

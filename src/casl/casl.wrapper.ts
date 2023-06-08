@@ -9,19 +9,16 @@ import {
 } from "./casl.types";
 import { createPrismaAbility } from "@casl/prisma";
 import { Inject, Injectable } from "@nestjs/common";
+import { PROVIDERS } from "./casl.constants";
 
 @Injectable()
-export class AbilityCheckerBuilder<JwtPayload>
-  implements AbilityCheckerBuilderInterface<JwtPayload>
-{
+export class AbilityCheckerBuilder implements AbilityCheckerBuilderInterface {
   private readonly can: Function;
   private readonly cannot: Function;
   private readonly build: Function;
-  private readonly rulesFunction: RulesFunction<JwtPayload>;
+  private readonly rulesFunction: RulesFunction<any>;
 
-  constructor(
-    @Inject("AUTHO_MODULE_OPTIONS") options: ModuleOptions<JwtPayload>
-  ) {
+  constructor(@Inject(PROVIDERS.MODULE_OPTIONS) options: ModuleOptions<any>) {
     const { can, cannot, build } = new AbilityBuilder(createPrismaAbility);
     this.can = can;
     this.cannot = cannot;
@@ -45,7 +42,7 @@ export class AbilityCheckerBuilder<JwtPayload>
     return this.cannot(action, resourceName, resource);
   }
 
-  buildFor(user: JwtPayload) {
+  buildFor(user: any) {
     this.rulesFunction(
       this.canWrapper.bind(this),
       this.cannotWrapper.bind(this),

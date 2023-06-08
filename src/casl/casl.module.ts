@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
 import { ModuleOptions } from "./casl.types";
 import { AbilityCheckerBuilder } from "./casl.wrapper";
+import { PROVIDERS } from "./casl.constants";
 
 @Module({})
 export class AuthoModule {
@@ -12,27 +12,20 @@ export class AuthoModule {
       module: AuthoModule,
       providers: [
         {
-          provide: "AUTHO_MODULE_OPTIONS",
+          provide: PROVIDERS.MODULE_OPTIONS,
           useValue: options,
         },
         {
-          provide: "PrismaService",
-          useExisting: options.PrismaService
-        }
+          provide: PROVIDERS.PRISMA_SERVICE,
+          useExisting: options.PrismaService,
+        },
       ],
       exports: [
         {
-          provide: "AbilityCheckerBuilder",
-          useClass: AbilityCheckerBuilder<JwtPayload>,
+          provide: PROVIDERS.ABILITY_CHECKER_BUILDER,
+          useClass: AbilityCheckerBuilder,
         },
       ],
     };
   }
 }
-
-const authoModule = AuthoModule.forRoot<{id:number}>({
-  PrismaService: PrismaClient,
-  rulesFunction: (can, cannot, user) =>{
-    can('update', 'user', {id: user.id})
-  }
-})
