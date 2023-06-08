@@ -38,3 +38,9 @@ export type AbilityMetadata = {
   possession: "own" | "any";
   resourceParamName?: string;
 }
+
+export type ModuleOptions<JwtPayload> = {
+  PrismaModule:any,
+  rulesFunction: RulesFunction<JwtPayload>,
+  userProperty?: string
+}

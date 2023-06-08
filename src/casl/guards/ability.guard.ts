@@ -4,22 +4,31 @@ import {
   Inject,
   NotFoundException,
 } from "@nestjs/common";
-import { AbilityCheckerBuilderInterface, AbilityMetadata } from "../casl.types";
+import {
+  AbilityCheckerBuilderInterface,
+  AbilityMetadata,
+  ModuleOptions,
+} from "../casl.types";
 import { Reflector } from "@nestjs/core";
 import { PrismaClient } from "@prisma/client";
 import { subject } from "@casl/ability";
 
-export class AbilityGuard<JwtPayload> implements CanActivate {
+export class AbilityGuard<JwtPayload = any> implements CanActivate {
   constructor(
-    @Inject("AbilityCheckerBuilderProvider")
+    @Inject("AbilityCheckerBuilder")
     private readonly abilityCheckerBuilderProvider: AbilityCheckerBuilderInterface<JwtPayload>,
-    @Inject("PrismaService") private readonly prismaService: PrismaClient,
+    @Inject("AUTHO_MODULE_OPTIONS")
+    private readonly moduleOptions: ModuleOptions<JwtPayload>,
     @Inject(Reflector) private readonly reflector: Reflector
   ) {}
 
+  private getPrismaService(): PrismaClient {
+    return Reflect.getMetadata("providers", this.moduleOptions.PrismaModule)[0];
+  }
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const user: JwtPayload = request.user;
+    const user: JwtPayload = request[this.moduleOptions.userProperty];
+    const prismaService = this.getPrismaService();
 
     const { action, resourceName, possession, resourceParamName } =
       this.reflector.get(
@@ -31,7 +40,7 @@ export class AbilityGuard<JwtPayload> implements CanActivate {
 
     const resource =
       possession === "own"
-        ? await (this.prismaService[resourceName].findUnique as any)({
+        ? await (prismaService[resourceName].findUnique as any)({
             where: { id: resourceId },
           })
         : resourceId;

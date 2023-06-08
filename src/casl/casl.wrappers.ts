@@ -1,50 +1,56 @@
 import { AbilityBuilder } from "@casl/ability";
-import { AbilityCheckerBuilderInterface, Actions, Entities, EntitiesNames, RulesFunction } from "./casl.types";
+import {
+  AbilityCheckerBuilderInterface,
+  Actions,
+  Entities,
+  EntitiesNames,
+  ModuleOptions,
+  RulesFunction,
+} from "./casl.types";
 import { createPrismaAbility } from "@casl/prisma";
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 
-export function AbilityCheckerBuilder<JwtPayload>(
-  rulesFunction: RulesFunction<JwtPayload>
-) {
-  @Injectable()
-  class AbilityCheckerBuilderClass implements AbilityCheckerBuilderInterface<JwtPayload> {
-    readonly can: Function;
-    readonly cannot: Function;
-    readonly build: Function;
+@Injectable()
+export class AbilityCheckerBuilder<JwtPayload>
+  implements AbilityCheckerBuilderInterface<JwtPayload>
+{
+  private readonly can: Function;
+  private readonly cannot: Function;
+  private readonly build: Function;
+  private readonly rulesFunction: RulesFunction<JwtPayload>;
 
-    constructor() {
-      const { can, cannot, build } = new AbilityBuilder(createPrismaAbility);
-
-      this.can = can;
-      this.cannot = cannot;
-      this.build = build;
-    }
-
-    canWrapper<EntityName extends EntitiesNames>(
-      action: Actions,
-      resourceName: EntityName,
-      resource?: Partial<Entities[EntityName]>
-    ) {
-      return this.can(action, resourceName, resource);
-    }
-
-    cannotWrapper<EntityName extends EntitiesNames>(
-      action: Actions,
-      resourceName: EntityName,
-      resource?: Partial<Entities[EntityName]>
-    ) {
-      return this.cannot(action, resourceName, resource);
-    }
-
-    buildFor(user: JwtPayload) {
-      rulesFunction(
-        this.canWrapper.bind(this),
-        this.cannotWrapper.bind(this),
-        user
-      );
-      return this.build();
-    }
+  constructor(
+    @Inject("AUTHO_MODULE_OPTIONS") options: ModuleOptions<JwtPayload>
+  ) {
+    const { can, cannot, build } = new AbilityBuilder(createPrismaAbility);
+    this.can = can;
+    this.cannot = cannot;
+    this.build = build;
+    this.rulesFunction = options.rulesFunction;
   }
 
-  return AbilityCheckerBuilderClass;
+  canWrapper<EntityName extends EntitiesNames>(
+    action: Actions,
+    resourceName: EntityName,
+    resource?: Partial<Entities[EntityName]>
+  ) {
+    return this.can(action, resourceName, resource);
+  }
+
+  cannotWrapper<EntityName extends EntitiesNames>(
+    action: Actions,
+    resourceName: EntityName,
+    resource?: Partial<Entities[EntityName]>
+  ) {
+    return this.cannot(action, resourceName, resource);
+  }
+
+  buildFor(user: JwtPayload) {
+    this.rulesFunction(
+      this.canWrapper.bind(this),
+      this.cannotWrapper.bind(this),
+      user
+    );
+    return this.build();
+  }
 }
