@@ -31,3 +31,9 @@ export type RulesFunction<JwtPayload> = (
 export interface AbilityCheckerBuilderInterface<JwtPayload> {
   buildFor(user: JwtPayload);
 }
+
+export type AbilityMetadata = {
+  action: Actions;
+  resourceName: EntitiesNames;
+  possession: "own" | "any";
+}
