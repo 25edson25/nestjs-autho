@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { ModuleOptions } from "./casl.types";
-import { AbilityCheckerBuilder } from "./casl.wrappers";
+import { AbilityCheckerBuilder } from "./casl.wrapper";
 
 @Module({})
 export class AuthoModule {
