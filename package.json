@@ -1,5 +1,5 @@
 {
-  "name": "@cjr-unb/nestjs-autho",
+  "name": "@cjr-unb/nest-autho",
   "version": "1.0.0",
   "description": "Module for authorization in NestJS built with CASL",
   "author": "Edson Sales",
@@ -21,6 +21,9 @@
     "rimraf": "^5.0.1",
     "typescript": "^5.1.3"
   },
+  "files:": [
+    "dist/**/*"
+  ],
   "keywords": [
     "nest",
     "nestjs",
