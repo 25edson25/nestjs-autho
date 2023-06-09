@@ -19,8 +19,6 @@ export class AuthoModule {
           provide: PROVIDERS.PRISMA_SERVICE,
           useExisting: options.PrismaService,
         },
-      ],
-      exports: [
         {
           provide: PROVIDERS.ABILITY_CHECKER_BUILDER,
           useClass: AbilityCheckerBuilder,
