@@ -14,8 +14,8 @@
   },
   "peerDependencies": {
     "@nestjs/common": "9.X",
-    "@nestjs/core": "^9.X",
-    "@prisma/client": "^4.X"
+    "@nestjs/core": "9.X",
+    "@prisma/client": "4.X"
   },
   "devDependencies": {
     "@types/node": "^20.2.5",
