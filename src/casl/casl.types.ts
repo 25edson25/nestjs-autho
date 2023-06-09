@@ -40,7 +40,7 @@ export type AbilityMetadata = {
 }
 
 export type ModuleOptions<JwtPayload> = {
-  PrismaService: typeof PrismaClient,
+  PrismaModule: any,
   rulesFunction: RulesFunction<JwtPayload>,
   userProperty?: string
 }

@@ -8,21 +8,21 @@ import {
   AbilityCheckerBuilderInterface,
   AbilityMetadata,
   ModuleOptions,
-} from "../casl.types";
+} from "../casl/casl.types";
 import { Reflector } from "@nestjs/core";
 import { subject } from "@casl/ability";
 import { PrismaClient } from "@prisma/client";
-import { ABILITY_METADATA, PROVIDERS } from "../casl.constants";
+import { ABILITY_METADATA, PROVIDERS } from "../casl/casl.constants";
 
 export class AbilityGuard implements CanActivate {
   constructor(
+    private readonly reflector: Reflector,
     @Inject(PROVIDERS.ABILITY_CHECKER_BUILDER)
     private readonly abilityCheckerBuilder: AbilityCheckerBuilderInterface,
     @Inject(PROVIDERS.MODULE_OPTIONS)
     private readonly moduleOptions: ModuleOptions<any>,
     @Inject(PROVIDERS.PRISMA_SERVICE)
-    private readonly prismaService: PrismaClient,
-    @Inject(Reflector) private readonly reflector: Reflector
+    private readonly prismaService: PrismaClient
   ) {}
 
   async canActivate(context: ExecutionContext) {
