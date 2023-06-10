@@ -9,6 +9,7 @@ export class AuthoModule {
   static forRoot<JwtPayload>(
     options: ModuleOptions<JwtPayload>
   ): DynamicModule {
+    options.userProperty = options.userProperty || "user";
     return {
       module: AuthoModule,
       imports: [options.PrismaModule],
@@ -27,7 +28,7 @@ export class AuthoModule {
         {
           provide: PROVIDERS.ABILITY_CHECKER_BUILDER,
           useClass: AbilityCheckerBuilder,
-        }
+        },
       ],
       exports: [
         {
