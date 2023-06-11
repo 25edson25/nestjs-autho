@@ -30,20 +30,22 @@ export class AbilityGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request[this.moduleOptions.userProperty];
 
-    const { action, resourceName, possession, resourceParamName } =
-      this.reflector.get(
-        ABILITY_METADATA,
-        context.getHandler()
-      ) as AbilityMetadata;
+    const {
+      action,
+      resource: resourceName,
+      options,
+    } = this.reflector.get(
+      ABILITY_METADATA,
+      context.getHandler()
+    ) as AbilityMetadata;
 
-    const resourceId: number = +request.params[resourceParamName];
+    const resourceId: number = +request.params[options.param];
 
-    const resource =
-      possession === "own"
-        ? await (this.prismaService[resourceName].findUnique as any)({
-            where: { id: resourceId },
-          })
-        : resourceId;
+    const resource = options.useDb
+      ? await (this.prismaService[resourceName].findUnique as any)({
+          where: { id: resourceId },
+        })
+      : resourceId;
 
     if (!resource) throw new NotFoundException(`${resourceName} not found`);
 

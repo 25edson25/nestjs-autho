@@ -1,5 +1,4 @@
 import { AbilityBuilder, PureAbility } from "@casl/ability";
-import { createPrismaAbility } from "@casl/prisma";
 import { PrismaClient } from "@prisma/client";
 
 export type Actions = "manage" | "create" | "read" | "update" | "delete";
@@ -18,8 +17,8 @@ export type Entities = {
 
 export type EntitiesNames = keyof Entities;
 
-type CanReturn = ReturnType<AbilityBuilder<PureAbility>['can']>;
-type CannotReturn = ReturnType<AbilityBuilder<PureAbility>['cannot']>;
+type CanReturn = ReturnType<AbilityBuilder<PureAbility>["can"]>;
+type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
 
 type CanWrapper = <EntityName extends EntitiesNames>(
   action: Actions,
@@ -39,20 +38,24 @@ export type RulesFunction<JwtPayload> = (args: {
   user: JwtPayload;
 }) => void;
 
-export type AbilityChecker = ReturnType<AbilityBuilder<PureAbility>['build']>
+export type AbilityChecker = ReturnType<AbilityBuilder<PureAbility>["build"]>;
 export interface AbilityCheckerBuilderInterface {
   buildFor(user: any): AbilityChecker;
 }
 
-// Mudar possession para useDatabase
-// Mudar resourceParamName para param
-// Colocar campos opcionais em objeto separado
+export type DecoratorOptions = { useDb?: boolean; param?: string };
+
 export type AbilityMetadata = {
   action: Actions;
-  resourceName: EntitiesNames;
-  possession: "own" | "any";
-  resourceParamName?: string;
+  resource: EntitiesNames;
+  options?: DecoratorOptions
 };
+
+export type AbilityDecorator = (
+  action: Actions,
+  resource: EntitiesNames,
+  options?: DecoratorOptions
+) => void;
 
 
 // Adicionar opções para definir comportamento caso recurso não seja encontrado
@@ -63,3 +66,5 @@ export type ModuleOptions<JwtPayload> = {
   rulesFunction: RulesFunction<JwtPayload>;
   userProperty?: string;
 };
+
+// OBS: casl não lança erro caso não encontre a propriedade no recurso, apenas retorna false

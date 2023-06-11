@@ -1,22 +1,30 @@
 import { SetMetadata, UseGuards, applyDecorators } from "@nestjs/common";
-import { AbilityMetadata, Actions, EntitiesNames } from "../casl/casl.types";
+import {
+  AbilityDecorator,
+  AbilityMetadata,
+  Actions,
+  DecoratorOptions,
+  EntitiesNames,
+} from "../casl/casl.types";
 import { AbilityGuard } from "../guards/ability.guard";
 import { ABILITY_METADATA } from "../casl/casl.constants";
 
-export function Ability(
+export const Ability: AbilityDecorator = (
   action: Actions,
-  resourceName: EntitiesNames,
-  possession: "any" | "own" = "any",
-  resourceParamName: string = "id"
-) {
-  const AbilityMetadata: AbilityMetadata = {
+  resource: EntitiesNames,
+  options?: DecoratorOptions
+) => {
+  options.param = options.param || "id";
+  options.useDb = options.useDb || false;
+
+  const abilityMetadata: AbilityMetadata = {
     action,
-    resourceName,
-    possession,
-    resourceParamName,
+    resource,
+    options,
   };
+  
   return applyDecorators(
-    SetMetadata(ABILITY_METADATA, AbilityMetadata),
+    SetMetadata(ABILITY_METADATA, abilityMetadata),
     UseGuards(AbilityGuard)
   );
-}
+};
