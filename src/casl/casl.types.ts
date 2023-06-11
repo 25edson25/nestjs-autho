@@ -17,6 +17,8 @@ export type Entities = {
 
 export type EntitiesNames = keyof Entities;
 
+
+
 type CanReturn = ReturnType<AbilityBuilder<PureAbility>["can"]>;
 type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
 
@@ -39,9 +41,6 @@ export type RulesFunction<JwtPayload> = (args: {
 }) => void;
 
 export type AbilityChecker = ReturnType<AbilityBuilder<PureAbility>["build"]>;
-export interface AbilityCheckerBuilderInterface {
-  buildFor(user: any): AbilityChecker;
-}
 
 export type DecoratorOptions = { useDb?: boolean; param?: string };
 

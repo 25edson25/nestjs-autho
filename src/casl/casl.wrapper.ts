@@ -1,7 +1,6 @@
 import { AbilityBuilder } from "@casl/ability";
 import {
   AbilityChecker,
-  AbilityCheckerBuilderInterface,
   Actions,
   Entities,
   EntitiesNames,
@@ -13,7 +12,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { PROVIDERS } from "./casl.constants";
 
 @Injectable()
-export class AbilityCheckerBuilder implements AbilityCheckerBuilderInterface {
+export class AbilityCheckerBuilder {
   private readonly can: Function;
   private readonly cannot: Function;
   private readonly build: Function;
@@ -27,7 +26,7 @@ export class AbilityCheckerBuilder implements AbilityCheckerBuilderInterface {
     this.rulesFunction = options.rulesFunction;
   }
 
-  canWrapper<EntityName extends EntitiesNames>(
+  private canWrapper<EntityName extends EntitiesNames>(
     action: Actions,
     resourceName: EntityName,
     resource?: Partial<Entities[EntityName]>
@@ -35,7 +34,7 @@ export class AbilityCheckerBuilder implements AbilityCheckerBuilderInterface {
     return this.can(action, resourceName, resource);
   }
 
-  cannotWrapper<EntityName extends EntitiesNames>(
+  private cannotWrapper<EntityName extends EntitiesNames>(
     action: Actions,
     resourceName: EntityName,
     resource?: Partial<Entities[EntityName]>
