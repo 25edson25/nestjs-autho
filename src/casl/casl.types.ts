@@ -1,3 +1,5 @@
+import { AbilityBuilder, PureAbility } from "@casl/ability";
+import { createPrismaAbility } from "@casl/prisma";
 import { PrismaClient } from "@prisma/client";
 
 export type Actions = "manage" | "create" | "read" | "update" | "delete";
@@ -16,31 +18,48 @@ export type Entities = {
 
 export type EntitiesNames = keyof Entities;
 
-type WrappersFunction = <EntityName extends EntitiesNames>(
+type CanReturn = ReturnType<AbilityBuilder<PureAbility>['can']>;
+type CannotReturn = ReturnType<AbilityBuilder<PureAbility>['cannot']>;
+
+type CanWrapper = <EntityName extends EntitiesNames>(
   action: Actions,
   resourceName: EntityName,
   resource?: Partial<Entities[EntityName]>
-) => any;
+) => CanReturn;
 
-export type RulesFunction<JwtPayload> = (
-  can: WrappersFunction,
-  cannot: WrappersFunction,
-  user: JwtPayload
-) => void;
+type CannotWrapper = <EntityName extends EntitiesNames>(
+  action: Actions,
+  resourceName: EntityName,
+  resource?: Partial<Entities[EntityName]>
+) => CannotReturn;
 
+export type RulesFunction<JwtPayload> = (args: {
+  can: CanWrapper;
+  cannot: CannotWrapper;
+  user: JwtPayload;
+}) => void;
+
+export type AbilityChecker = ReturnType<AbilityBuilder<PureAbility>['build']>
 export interface AbilityCheckerBuilderInterface {
-  buildFor(user: any);
+  buildFor(user: any): AbilityChecker;
 }
 
+// Mudar possession para useDatabase
+// Mudar resourceParamName para param
+// Colocar campos opcionais em objeto separado
 export type AbilityMetadata = {
   action: Actions;
   resourceName: EntitiesNames;
   possession: "own" | "any";
   resourceParamName?: string;
-}
+};
 
+
+// Adicionar opções para definir comportamento caso recurso não seja encontrado
+// Adicionar possiblidade do usuario definir actions e resources
+// Adicionar possibilidade do usuario o tipo de id do recurso
 export type ModuleOptions<JwtPayload> = {
-  PrismaModule: any,
-  rulesFunction: RulesFunction<JwtPayload>,
-  userProperty?: string
-}
+  PrismaModule: any;
+  rulesFunction: RulesFunction<JwtPayload>;
+  userProperty?: string;
+};

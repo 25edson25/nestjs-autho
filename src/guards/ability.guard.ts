@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import {
+  AbilityChecker,
   AbilityCheckerBuilderInterface,
   AbilityMetadata,
   ModuleOptions,
@@ -46,7 +47,8 @@ export class AbilityGuard implements CanActivate {
 
     if (!resource) throw new NotFoundException(`${resourceName} not found`);
 
-    const abilityChecker = this.abilityCheckerBuilder.buildFor(user);
+    const abilityChecker: AbilityChecker =
+      this.abilityCheckerBuilder.buildFor(user);
 
     return abilityChecker.can(action, subject(resourceName, resource));
   }

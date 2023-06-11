@@ -1,5 +1,6 @@
 import { AbilityBuilder } from "@casl/ability";
 import {
+  AbilityChecker,
   AbilityCheckerBuilderInterface,
   Actions,
   Entities,
@@ -42,12 +43,12 @@ export class AbilityCheckerBuilder implements AbilityCheckerBuilderInterface {
     return this.cannot(action, resourceName, resource);
   }
 
-  buildFor(user: any) {
-    this.rulesFunction(
-      this.canWrapper.bind(this),
-      this.cannotWrapper.bind(this),
-      user
-    );
+  buildFor(user: any): AbilityChecker {
+    this.rulesFunction({
+      user,
+      can: this.canWrapper.bind(this),
+      cannot: this.cannotWrapper.bind(this),
+    });
     return this.build();
   }
 }
