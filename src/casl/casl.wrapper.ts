@@ -1,9 +1,10 @@
 import { AbilityBuilder } from "@casl/ability";
 import {
   AbilityChecker,
-  Actions,
-  Entities,
-  EntitiesNames,
+  CanReturn,
+  CanWrapper,
+  CannotReturn,
+  CannotWrapper,
   ModuleOptions,
   RulesFunction,
 } from "./casl.types";
@@ -26,20 +27,12 @@ export class AbilityCheckerBuilder {
     this.rulesFunction = options.rulesFunction;
   }
 
-  private canWrapper<EntityName extends EntitiesNames>(
-    action: Actions,
-    resourceName: EntityName,
-    resource?: Partial<Entities[EntityName]>
-  ) {
-    return this.can(action, resourceName, resource);
+  private canWrapper(...args: Parameters<CanWrapper<any, any>>): CanReturn {
+    return this.can(...args);
   }
 
-  private cannotWrapper<EntityName extends EntitiesNames>(
-    action: Actions,
-    resourceName: EntityName,
-    resource?: Partial<Entities[EntityName]>
-  ) {
-    return this.cannot(action, resourceName, resource);
+  private cannotWrapper(...args: Parameters<CannotWrapper<any, any>>): CannotReturn {
+    return this.can(...args);
   }
 
   buildFor(user: any): AbilityChecker {

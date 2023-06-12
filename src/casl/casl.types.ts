@@ -1,13 +1,13 @@
 import { AbilityBuilder, PureAbility } from "@casl/ability";
 import { PrismaClient } from "@prisma/client";
 
-export type Actions = "manage" | "create" | "read" | "update" | "delete";
+export type DefaultActions = "manage" | "create" | "read" | "update" | "delete";
 
 type Models = {
   [key in keyof PrismaClient as Exclude<key, `$${string}`>]: PrismaClient[key];
 };
 
-export type Entities = {
+type DefaultEntities = {
   [key in keyof Models]: Models[key] extends {
     findUnique: (args: any) => infer PromisedEntity;
   }
@@ -15,54 +15,61 @@ export type Entities = {
     : never;
 };
 
-export type EntitiesNames = keyof Entities;
+export type DefaultEntitiesNames = keyof DefaultEntities;
 
+export type CanReturn = ReturnType<AbilityBuilder<PureAbility>["can"]>;
+export type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
 
-
-type CanReturn = ReturnType<AbilityBuilder<PureAbility>["can"]>;
-type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
-
-type CanWrapper = <EntityName extends EntitiesNames>(
+export type CanWrapper<Actions, Resource> = <Name extends Resource>(
   action: Actions,
-  resourceName: EntityName,
-  resource?: Partial<Entities[EntityName]>
+  resourceName: Name,
+  resource?: Name extends DefaultEntitiesNames ? DefaultEntities[Name] : any
 ) => CanReturn;
 
-type CannotWrapper = <EntityName extends EntitiesNames>(
+export type CannotWrapper<Actions, Resource> = <Name extends Resource>(
   action: Actions,
-  resourceName: EntityName,
-  resource?: Partial<Entities[EntityName]>
+  resourceName: Name,
+  resource?: Name extends DefaultEntitiesNames ? DefaultEntities[Name] : any
 ) => CannotReturn;
 
-export type RulesFunction<JwtPayload> = (args: {
-  can: CanWrapper;
-  cannot: CannotWrapper;
+export type RulesFunction<
+  JwtPayload,
+  Actions = DefaultActions,
+  Resources = DefaultEntitiesNames
+> = (args: {
+  can: CanWrapper<Actions, Resources>;
+  cannot: CannotWrapper<Actions, Resources>;
   user: JwtPayload;
 }) => void;
 
 export type AbilityChecker = ReturnType<AbilityBuilder<PureAbility>["build"]>;
 
-export type DecoratorOptions = { useDb?: boolean; param?: string };
-
-export type AbilityMetadata = {
+export type AbilityMetadata<Actions, Resources> = {
   action: Actions;
-  resource: EntitiesNames;
-  options?: DecoratorOptions
+  resource: Resources;
+  options?: { useDb?: boolean; param?: string };
 };
 
-export type AbilityDecorator = (
-  action: Actions,
-  resource: EntitiesNames,
-  options?: DecoratorOptions
+export type AbilityDecorator<
+  Actions = DefaultActions,
+  Resources = DefaultEntitiesNames
+> = (
+  action: AbilityMetadata<Actions, Resources>["action"],
+  resource: AbilityMetadata<Actions, Resources>["resource"],
+  options?: AbilityMetadata<Actions, Resources>["options"]
 ) => void;
-
 
 // Adicionar opções para definir comportamento caso recurso não seja encontrado
 // Adicionar possiblidade do usuario definir actions e resources
 // Adicionar possibilidade do usuario o tipo de id do recurso
-export type ModuleOptions<JwtPayload> = {
+
+export type ModuleOptions<
+  JwtPayload,
+  Actions extends string = DefaultActions,
+  Resources extends string = DefaultEntitiesNames
+> = {
   PrismaModule: any;
-  rulesFunction: RulesFunction<JwtPayload>;
+  rulesFunction: RulesFunction<JwtPayload, Actions, Resources>;
   userProperty?: string;
 };
 

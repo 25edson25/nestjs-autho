@@ -6,8 +6,8 @@ import { PROVIDERS } from "./casl.constants";
 @Global()
 @Module({})
 export class AuthoModule {
-  static forRoot<JwtPayload>(
-    options: ModuleOptions<JwtPayload>
+  static forRoot<JwtPayload, Actions extends string, Resources extends string>(
+    options: ModuleOptions<JwtPayload, Actions, Resources>
   ): DynamicModule {
     options.userProperty = options.userProperty || "user";
     return {

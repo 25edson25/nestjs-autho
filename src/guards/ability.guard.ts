@@ -37,7 +37,7 @@ export class AbilityGuard implements CanActivate {
     } = this.reflector.get(
       ABILITY_METADATA,
       context.getHandler()
-    ) as AbilityMetadata;
+    ) as AbilityMetadata<any, any>;
 
     const resourceId: number = +request.params[options.param];
 
