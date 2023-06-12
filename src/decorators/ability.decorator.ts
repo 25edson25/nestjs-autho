@@ -8,10 +8,12 @@ import {
 import { AbilityGuard } from "../guards/ability.guard";
 import { ABILITY_METADATA } from "../casl/casl.constants";
 
-export function Ability<
+export const Ability: AbilityDecorator = <
   Actions = DefaultActions,
   Resources = DefaultEntitiesNames
->(...args: Parameters<AbilityDecorator<Actions, Resources>>) {
+>(
+  ...args: Parameters<AbilityDecorator<Actions, Resources>>
+): MethodDecorator => {
   const [action, resource, options] = args;
 
   options.param = options.param || "id";
@@ -27,5 +29,4 @@ export function Ability<
     SetMetadata(ABILITY_METADATA, abilityMetadata),
     UseGuards(AbilityGuard)
   );
-}
-
+};

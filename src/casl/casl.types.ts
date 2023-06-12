@@ -57,7 +57,7 @@ export type AbilityDecorator<
   action: AbilityMetadata<Actions, Resources>["action"],
   resource: AbilityMetadata<Actions, Resources>["resource"],
   options?: AbilityMetadata<Actions, Resources>["options"]
-) => void;
+) => MethodDecorator
 
 // Adicionar opções para definir comportamento caso recurso não seja encontrado
 // Adicionar possiblidade do usuario definir actions e resources
