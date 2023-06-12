@@ -1,14 +1,20 @@
 import { DynamicModule, Global, Module } from "@nestjs/common";
-import { ModuleOptions } from "./casl.types";
+import {
+  DefaultActions,
+  DefaultResources,
+  ModuleOptions,
+} from "./casl.types";
 import { AbilityCheckerBuilder } from "./casl.wrapper";
 import { PROVIDERS } from "./casl.constants";
 
 @Global()
 @Module({})
 export class AuthoModule {
-  static forRoot<JwtPayload, Actions extends string, Resources extends string>(
-    options: ModuleOptions<JwtPayload, Actions, Resources>
-  ): DynamicModule {
+  static forRoot<
+    JwtPayload,
+    Actions extends string = DefaultActions,
+    Resources extends string = DefaultResources
+  >(options: ModuleOptions<JwtPayload, Actions, Resources>): DynamicModule {
     options.userProperty = options.userProperty || "user";
     return {
       module: AuthoModule,

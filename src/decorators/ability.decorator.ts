@@ -3,14 +3,14 @@ import {
   AbilityDecorator,
   AbilityMetadata,
   DefaultActions,
-  DefaultEntitiesNames,
+  DefaultResources,
 } from "../casl/casl.types";
 import { AbilityGuard } from "../guards/ability.guard";
 import { ABILITY_METADATA } from "../casl/casl.constants";
 
 export const Ability: AbilityDecorator = <
-  Actions = DefaultActions,
-  Resources = DefaultEntitiesNames
+  Actions extends string = DefaultActions,
+  Resources extends string = DefaultResources
 >(
   ...args: Parameters<AbilityDecorator<Actions, Resources>>
 ): MethodDecorator => {

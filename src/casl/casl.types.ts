@@ -15,7 +15,7 @@ type DefaultEntities = {
     : never;
 };
 
-export type DefaultEntitiesNames = keyof DefaultEntities;
+export type DefaultResources = keyof DefaultEntities;
 
 export type CanReturn = ReturnType<AbilityBuilder<PureAbility>["can"]>;
 export type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
@@ -23,19 +23,19 @@ export type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
 export type CanWrapper<Actions, Resource> = <Name extends Resource>(
   action: Actions,
   resourceName: Name,
-  resource?: Name extends DefaultEntitiesNames ? DefaultEntities[Name] : any
+  resource?: Name extends DefaultResources ? DefaultEntities[Name] : any
 ) => CanReturn;
 
 export type CannotWrapper<Actions, Resource> = <Name extends Resource>(
   action: Actions,
   resourceName: Name,
-  resource?: Name extends DefaultEntitiesNames ? DefaultEntities[Name] : any
+  resource?: Name extends DefaultResources ? DefaultEntities[Name] : any
 ) => CannotReturn;
 
 export type RulesFunction<
   JwtPayload,
   Actions = DefaultActions,
-  Resources = DefaultEntitiesNames
+  Resources = DefaultResources
 > = (args: {
   can: CanWrapper<Actions, Resources>;
   cannot: CannotWrapper<Actions, Resources>;
@@ -51,22 +51,21 @@ export type AbilityMetadata<Actions, Resources> = {
 };
 
 export type AbilityDecorator<
-  Actions = DefaultActions,
-  Resources = DefaultEntitiesNames
+  Actions extends string = DefaultActions,
+  Resources extends string = DefaultResources
 > = (
   action: AbilityMetadata<Actions, Resources>["action"],
   resource: AbilityMetadata<Actions, Resources>["resource"],
   options?: AbilityMetadata<Actions, Resources>["options"]
-) => MethodDecorator
+) => MethodDecorator;
 
 // Adicionar opções para definir comportamento caso recurso não seja encontrado
-// Adicionar possiblidade do usuario definir actions e resources
 // Adicionar possibilidade do usuario o tipo de id do recurso
 
 export type ModuleOptions<
   JwtPayload,
   Actions extends string = DefaultActions,
-  Resources extends string = DefaultEntitiesNames
+  Resources extends string = DefaultResources
 > = {
   PrismaModule: any;
   rulesFunction: RulesFunction<JwtPayload, Actions, Resources>;
