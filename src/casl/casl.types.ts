@@ -14,11 +14,12 @@ type Entities = {
     ? Awaited<PromisedEntity>
     : never;
 };
-
 export type DefaultResources = keyof Entities;
+
 
 export type CanReturn = ReturnType<AbilityBuilder<PureAbility>["can"]>;
 export type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
+export type AbilityChecker = ReturnType<AbilityBuilder<PureAbility>["build"]>;
 
 export type CanWrapper<Actions, Resource> = <Name extends Resource>(
   action: Actions,
@@ -33,16 +34,16 @@ export type CannotWrapper<Actions, Resource> = <Name extends Resource>(
 ) => CannotReturn;
 
 
-type AbilityOptions = {
+export type AbilityOptions = {
   actions?: string;
   resources?: string;
 };
-type DefaultAbilityOptions = {
+export type DefaultAbilityOptions = {
   actions: DefaultActions;
   resources: DefaultResources;
 };
 
-type StringOrDefault<T, Default> = T extends string ? T : Default;
+export type StringOrDefault<T, Default> = T extends string ? T : Default;
 
 export type RulesFunction<
   JwtPayload,
@@ -59,25 +60,17 @@ export type RulesFunction<
   user: JwtPayload;
 }) => void;
 
-export type AbilityChecker = ReturnType<AbilityBuilder<PureAbility>["build"]>;
+export type AbilityDecoratorOptions = { useDb?: boolean; param?: string }
 
-export type AbilityMetadata<Actions, Resources> = {
-  action: Actions;
-  resource: Resources;
-  options?: { useDb?: boolean; param?: string };
+export type AbilityMetadata = {
+  action: string;
+  resource: string;
+  options?: AbilityDecoratorOptions
 };
 
-export type AbilityDecorator<
-  Actions extends string = DefaultActions,
-  Resources extends string = DefaultResources
-> = (
-  action: AbilityMetadata<Actions, Resources>["action"],
-  resource: AbilityMetadata<Actions, Resources>["resource"],
-  options?: AbilityMetadata<Actions, Resources>["options"]
-) => MethodDecorator;
-
 // Adicionar opções para definir comportamento caso recurso não seja encontrado
-// Adicionar possibilidade do usuario definir o tipo de id dorecurso
+// Adicionar possibilidade do usuario definir o tipo de id do recurso
+// OBS: casl não lança erro caso não encontre a propriedade no recurso, apenas retorna false
 export type ModuleOptions<
   JwtPayload,
   Options extends AbilityOptions = DefaultAbilityOptions
@@ -93,5 +86,3 @@ export type ModuleOptions<
   userProperty?: string;
 };
 
-
-// OBS: casl não lança erro caso não encontre a propriedade no recurso, apenas retorna false
