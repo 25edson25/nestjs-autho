@@ -46,12 +46,16 @@ export class AbilityGuard implements CanActivate {
           where: { id: resourceId },
         })
       : resourceId;
-
-    if (!resource) throw new NotFoundException(`${resourceName} not found`);
-
+  
     const abilityChecker: AbilityChecker =
       this.abilityCheckerBuilder.buildFor(user);
+    
+    const hasPermission = abilityChecker.can(action, subject(resourceName, resource));
+      
+    if (!hasPermission) return false;
 
-    return abilityChecker.can(action, subject(resourceName, resource));
+    if (!resource) throw new NotFoundException(`${resourceName} not found`);
+    
+    return true;
   }
 }
