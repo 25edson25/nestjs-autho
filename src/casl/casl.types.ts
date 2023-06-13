@@ -1,7 +1,7 @@
 import { AbilityBuilder, PureAbility } from "@casl/ability";
 import { PrismaClient, Prisma } from "@prisma/client";
 
-export type DefaultActions = "manage" | "create" | "read" | "update" | "delete";
+// Prisma Types
 
 type Models = {
   [key in keyof PrismaClient as Exclude<key, `$${string}`>]: PrismaClient[key];
@@ -14,8 +14,11 @@ type Entities = {
     ? Awaited<PromisedEntity>
     : never;
 };
-export type DefaultResources = keyof Entities;
 
+export type DefaultResources = keyof Entities;
+export type DefaultActions = "manage" | "create" | "read" | "update" | "delete";
+
+// Wrapper Types
 
 export type CanReturn = ReturnType<AbilityBuilder<PureAbility>["can"]>;
 export type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
@@ -33,6 +36,9 @@ export type CannotWrapper<Actions, Resource> = <Name extends Resource>(
   resource?: Name extends DefaultResources ? Partial<Entities[Name]> : any
 ) => CannotReturn;
 
+// Module Types
+
+export type StringOrDefault<T, Default> = T extends string ? T : Default;
 
 export type AbilityOptions = {
   actions?: string;
@@ -42,8 +48,6 @@ export type DefaultAbilityOptions = {
   actions: DefaultActions;
   resources: DefaultResources;
 };
-
-export type StringOrDefault<T, Default> = T extends string ? T : Default;
 
 export type RulesFunction<
   JwtPayload,
