@@ -1,5 +1,5 @@
 import { AbilityBuilder, PureAbility } from "@casl/ability";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 export type DefaultActions = "manage" | "create" | "read" | "update" | "delete";
 
@@ -7,7 +7,7 @@ type Models = {
   [key in keyof PrismaClient as Exclude<key, `$${string}`>]: PrismaClient[key];
 };
 
-type DefaultEntities = {
+type Entities = {
   [key in keyof Models]: Models[key] extends {
     findUnique: (args: any) => infer PromisedEntity;
   }
@@ -15,7 +15,7 @@ type DefaultEntities = {
     : never;
 };
 
-export type DefaultResources = keyof DefaultEntities;
+export type DefaultResources = keyof Entities;
 
 export type CanReturn = ReturnType<AbilityBuilder<PureAbility>["can"]>;
 export type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
@@ -23,22 +23,39 @@ export type CannotReturn = ReturnType<AbilityBuilder<PureAbility>["cannot"]>;
 export type CanWrapper<Actions, Resource> = <Name extends Resource>(
   action: Actions,
   resourceName: Name,
-  resource?: Name extends DefaultResources ? DefaultEntities[Name] : any
+  resource?: Name extends DefaultResources ? Partial<Entities[Name]> : any
 ) => CanReturn;
 
 export type CannotWrapper<Actions, Resource> = <Name extends Resource>(
   action: Actions,
   resourceName: Name,
-  resource?: Name extends DefaultResources ? DefaultEntities[Name] : any
+  resource?: Name extends DefaultResources ? Partial<Entities[Name]> : any
 ) => CannotReturn;
+
+
+type AbilityOptions = {
+  actions?: string;
+  resources?: string;
+};
+type DefaultAbilityOptions = {
+  actions: DefaultActions;
+  resources: DefaultResources;
+};
+
+type StringOrDefault<T, Default> = T extends string ? T : Default;
 
 export type RulesFunction<
   JwtPayload,
-  Actions = DefaultActions,
-  Resources = DefaultResources
+  Options extends AbilityOptions = DefaultAbilityOptions
 > = (args: {
-  can: CanWrapper<Actions, Resources>;
-  cannot: CannotWrapper<Actions, Resources>;
+  can: CanWrapper<
+    StringOrDefault<Options["actions"], DefaultActions>,
+    StringOrDefault<Options["resources"], DefaultResources>
+  >;
+  cannot: CannotWrapper<
+    StringOrDefault<Options["actions"], DefaultActions>,
+    StringOrDefault<Options["resources"], DefaultResources>
+  >;
   user: JwtPayload;
 }) => void;
 
@@ -60,16 +77,21 @@ export type AbilityDecorator<
 ) => MethodDecorator;
 
 // Adicionar opções para definir comportamento caso recurso não seja encontrado
-// Adicionar possibilidade do usuario o tipo de id do recurso
-
+// Adicionar possibilidade do usuario definir o tipo de id dorecurso
 export type ModuleOptions<
   JwtPayload,
-  Actions extends string = DefaultActions,
-  Resources extends string = DefaultResources
+  Options extends AbilityOptions = DefaultAbilityOptions
 > = {
   PrismaModule: any;
-  rulesFunction: RulesFunction<JwtPayload, Actions, Resources>;
+  rulesFunction: RulesFunction<
+    JwtPayload,
+    {
+      actions: StringOrDefault<Options["actions"], DefaultActions>;
+      resources: StringOrDefault<Options["resources"], DefaultResources>;
+    }
+  >;
   userProperty?: string;
 };
+
 
 // OBS: casl não lança erro caso não encontre a propriedade no recurso, apenas retorna false
