@@ -46,12 +46,12 @@ export class AbilityGuard implements CanActivate {
 
     if (options.useDb)
       resource = await this.prismaService[resourceName]
-        .findUniqueOrThrow({
+        .findUnique({
           where: { id: resourceId },
         })
         .catch((err) => {
           if (err instanceof Prisma.PrismaClientValidationError)
-            // id property error | resource name error | id type error
+            // id property error | resource name error | id type error (stringIdName | numberIdName)
             throw new InternalServerErrorException();
 
           throw err;
