@@ -1,8 +1,11 @@
 import { DynamicModule, Global, Module } from "@nestjs/common";
 import {
+  AbilityOptions,
+  DefaultAbilityOptions,
   DefaultActions,
   DefaultResources,
   ModuleOptions,
+  StringOrDefault,
 } from "./casl.types";
 import { AbilityCheckerBuilder } from "./casl.wrapper";
 import { PROVIDERS } from "./casl.constants";
@@ -12,9 +15,16 @@ import { PROVIDERS } from "./casl.constants";
 export class AuthoModule {
   static forRoot<
     JwtPayload,
-    Actions extends string = DefaultActions,
-    Resources extends string = DefaultResources
-  >(options: ModuleOptions<JwtPayload, Actions, Resources>): DynamicModule {
+    Options extends AbilityOptions = DefaultAbilityOptions
+  >(
+    options: ModuleOptions<
+      JwtPayload,
+      {
+        actions: StringOrDefault<Options["actions"], DefaultActions>;
+        resources: StringOrDefault<Options["resources"], DefaultResources>;
+      }
+    >
+  ): DynamicModule {
     options.userProperty = options.userProperty || "user";
     return {
       module: AuthoModule,
