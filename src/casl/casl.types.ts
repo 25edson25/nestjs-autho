@@ -75,7 +75,7 @@ export type AbilityMetadata = {
 // Adicionar opções para definir comportamento caso recurso não seja encontrado
 // Adicionar possibilidade do usuario definir o tipo de id do recurso
 // OBS: casl não lança erro caso não encontre a propriedade no recurso, apenas retorna false
-type ExceptionIfNotFound = "none" | "prisma" | "http";
+export type ExceptionIfNotFound = "none" | "prisma" | "http";
 
 export type ModuleOptions<
   JwtPayload,
