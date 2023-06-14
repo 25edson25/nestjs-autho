@@ -26,6 +26,8 @@ export class AuthoModule {
     >
   ): DynamicModule {
     options.userProperty = options.userProperty || "user";
+    options.exceptionIfNotFound = options.exceptionIfNotFound || "none";
+    
     return {
       module: AuthoModule,
       imports: [options.PrismaModule],
