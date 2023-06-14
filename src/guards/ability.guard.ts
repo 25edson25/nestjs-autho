@@ -51,7 +51,7 @@ export class AbilityGuard implements CanActivate {
         })
         .catch((err) => {
           if (err instanceof Prisma.PrismaClientValidationError)
-            // id property error
+            // id property error | resource name error | id type error
             throw new InternalServerErrorException();
 
           throw err;
@@ -69,6 +69,7 @@ export class AbilityGuard implements CanActivate {
 
     if (resource) return true;
 
+    // Resource not found, but user has permission
     switch (this.moduleOptions.exceptionIfNotFound) {
       case "none":
         return true;
