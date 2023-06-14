@@ -49,7 +49,7 @@ export type DefaultAbilityOptions = {
   resources: DefaultResources;
 };
 
-export type RulesFunction<
+export type Rules<
   JwtPayload,
   Options extends AbilityOptions = DefaultAbilityOptions
 > = (args: {
@@ -64,23 +64,25 @@ export type RulesFunction<
   user: JwtPayload;
 }) => void;
 
-export type AbilityDecoratorOptions = { useDb?: boolean; param?: string }
+export type AbilityDecoratorOptions = { useDb?: boolean; param?: string };
 
 export type AbilityMetadata = {
   action: string;
   resource: string;
-  options?: AbilityDecoratorOptions
+  options?: AbilityDecoratorOptions;
 };
 
 // Adicionar opções para definir comportamento caso recurso não seja encontrado
 // Adicionar possibilidade do usuario definir o tipo de id do recurso
 // OBS: casl não lança erro caso não encontre a propriedade no recurso, apenas retorna false
+type ExceptionIfNotFound = "none" | "prisma" | "http";
+
 export type ModuleOptions<
   JwtPayload,
   Options extends AbilityOptions = DefaultAbilityOptions
 > = {
   PrismaModule: any;
-  rulesFunction: RulesFunction<
+  rules: Rules<
     JwtPayload,
     {
       actions: StringOrDefault<Options["actions"], DefaultActions>;
@@ -88,5 +90,6 @@ export type ModuleOptions<
     }
   >;
   userProperty?: string;
+  exceptionIfNotFound?: ExceptionIfNotFound;
 };
 

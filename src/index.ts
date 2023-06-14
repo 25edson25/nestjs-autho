@@ -1,7 +1,7 @@
 export { AuthoModule } from "./casl/casl.module";
 export { Ability } from "./decorators/ability.decorator";
 export {
-  RulesFunction,
+  Rules,
   DefaultActions,
   DefaultResources,
 } from "./casl/casl.types";

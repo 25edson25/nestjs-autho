@@ -6,7 +6,7 @@ import {
   CannotReturn,
   CannotWrapper,
   ModuleOptions,
-  RulesFunction,
+  Rules,
 } from "./casl.types";
 import { createPrismaAbility } from "@casl/prisma";
 import { Inject, Injectable } from "@nestjs/common";
@@ -17,14 +17,14 @@ export class AbilityCheckerBuilder {
   private readonly can: Function;
   private readonly cannot: Function;
   private readonly build: Function;
-  private readonly rulesFunction: RulesFunction<any>;
+  private readonly rules: Rules<any>;
 
   constructor(@Inject(PROVIDERS.MODULE_OPTIONS) options: ModuleOptions<any>) {
     const { can, cannot, build } = new AbilityBuilder(createPrismaAbility);
     this.can = can;
     this.cannot = cannot;
     this.build = build;
-    this.rulesFunction = options.rulesFunction;
+    this.rules = options.rules;
   }
 
   private canWrapper(...args: Parameters<CanWrapper<any, any>>): CanReturn {
@@ -36,7 +36,7 @@ export class AbilityCheckerBuilder {
   }
 
   buildFor(user: any): AbilityChecker {
-    this.rulesFunction({
+    this.rules({
       user,
       can: this.canWrapper.bind(this),
       cannot: this.cannotWrapper.bind(this),
