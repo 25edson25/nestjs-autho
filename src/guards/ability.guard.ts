@@ -2,7 +2,6 @@ import {
   CanActivate,
   ExecutionContext,
   Inject,
-  InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
 import {
@@ -15,6 +14,7 @@ import { subject } from "@casl/ability";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { ABILITY_METADATA, PROVIDERS } from "../casl/casl.constants";
 import { AbilityCheckerBuilder } from "../casl/casl.wrapper";
+import { AuthoError } from "../casl/casl.types";
 
 export class AbilityGuard implements CanActivate {
   constructor(
@@ -40,20 +40,41 @@ export class AbilityGuard implements CanActivate {
       context.getHandler()
     ) as AbilityMetadata;
 
-    const resourceId: number = +request.params[options.param];
+    const idName =
+      this.moduleOptions.stringIdName || this.moduleOptions.numberIdName;
 
-    let resource = { id: resourceId };
+    let resourceId: string = request.params[options.param];
+
+    let resource = {
+      [idName]: this.moduleOptions.numberIdName
+        ? Number(resourceId)
+        : resourceId,
+    };
+
+    if (!resource[idName])
+      throw new AuthoError(
+        "Received id is not compatible with id type.\n" +
+          "If you are using a string id, make sure to set the stringIdName option.\n"
+      );
+
+    if (!this.prismaService[resourceName] && options.useDb)
+      throw new AuthoError(
+        "Resource name is not a valid Prisma model name\n" +
+          "If you are using a custom resource, make sure to set the useDb option to false.\n"
+      );
 
     if (options.useDb)
       resource = await this.prismaService[resourceName]
         .findUnique({
-          where: { id: resourceId },
+          where: resource,
         })
         .catch((err) => {
           if (err instanceof Prisma.PrismaClientValidationError)
-            // id property error | resource name error | id type error (stringIdName | numberIdName)
-            throw new InternalServerErrorException();
-
+            throw new AuthoError(
+              "Invalid id property\n" +
+                "If your id property is not called 'id', " +
+                "make sure to set the numberIdName or the stringIdName option.\n"
+            );
           throw err;
         });
 
@@ -64,6 +85,8 @@ export class AbilityGuard implements CanActivate {
       action,
       subject(resourceName, resource)
     );
+
+    if (!options.useDb) return hasPermission;
 
     if (!hasPermission) return false;
 
@@ -79,7 +102,7 @@ export class AbilityGuard implements CanActivate {
         throw new Prisma.PrismaClientKnownRequestError(
           `No ${resourceName} found`,
           {
-            code: 'P2025',
+            code: "P2025",
             clientVersion: Prisma.prismaVersion.client,
           }
         );

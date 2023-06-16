@@ -72,9 +72,6 @@ export type AbilityMetadata = {
   options?: AbilityDecoratorOptions;
 };
 
-// Adicionar opções para definir comportamento caso recurso não seja encontrado
-// Adicionar possibilidade do usuario definir o tipo de id do recurso
-// OBS: casl não lança erro caso não encontre a propriedade no recurso, apenas retorna false
 export type ExceptionIfNotFound = "none" | "prisma" | "http";
 
 export type ModuleOptions<
@@ -91,5 +88,9 @@ export type ModuleOptions<
   >;
   userProperty?: string;
   exceptionIfNotFound?: ExceptionIfNotFound;
-};
+} & (
+  | { stringIdName?: string; numberIdName?: never }
+  | { stringIdName?: never; numberIdName?: string }
+);
 
+export class AuthoError extends Error {}
