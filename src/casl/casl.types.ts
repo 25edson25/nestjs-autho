@@ -1,5 +1,5 @@
 import { AbilityBuilder, PureAbility } from "@casl/ability";
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 // Prisma Types
 
