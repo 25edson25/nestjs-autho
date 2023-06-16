@@ -59,7 +59,7 @@ export class AbilityGuard implements CanActivate {
 
     if (!this.prismaService[resourceName] && options.useDb)
       throw new AuthoError(
-        "Resource name is not a valid Prisma model name\n" +
+        `'${resourceName}' name is not a valid Prisma model name\n` +
           "If you are using a custom resource, make sure to set the useDb option to false.\n"
       );
 
