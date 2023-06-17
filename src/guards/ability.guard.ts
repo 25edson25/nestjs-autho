@@ -31,6 +31,13 @@ export class AbilityGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request[this.moduleOptions.userProperty];
 
+    if (!user)
+      throw new AuthoError(
+        "No user found in request object.\n" +
+          "If your user property is not called 'user', " +
+          "make sure to set the userProperty option.\n"
+      );
+
     const {
       action,
       resource: resourceName,
