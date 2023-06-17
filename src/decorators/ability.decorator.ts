@@ -16,7 +16,7 @@ export function Ability<
 >(
   action: StringOrDefault<Options["actions"], DefaultActions>,
   resource: StringOrDefault<Options["resources"], DefaultResources>,
-  options?: AbilityDecoratorOptions
+  options: AbilityDecoratorOptions = {}
 ): MethodDecorator {
   options.param = options.param || "id";
   options.useDb = options.useDb || false;
