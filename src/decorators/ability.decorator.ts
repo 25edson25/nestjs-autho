@@ -18,7 +18,6 @@ export function Ability<
   resource: StringOrDefault<Options["resources"], DefaultResources>,
   options: AbilityDecoratorOptions = {}
 ): MethodDecorator {
-  options.param = options.param || "id";
   options.useDb = options.useDb || false;
 
   const abilityMetadata: AbilityMetadata = {

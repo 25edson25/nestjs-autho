@@ -72,7 +72,7 @@ export type AbilityMetadata = {
   options?: AbilityDecoratorOptions;
 };
 
-export type ExceptionIfNotFound = "none" | "prisma" | "http";
+export type ExceptionIfNotFound = "not found" | "prisma" | "forbidden" ;
 
 export type ModuleOptions<
   JwtPayload,

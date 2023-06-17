@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Inject,
   NotFoundException,
 } from "@nestjs/common";
@@ -50,7 +51,7 @@ export class AbilityGuard implements CanActivate {
     const idName =
       this.moduleOptions.stringIdName || this.moduleOptions.numberIdName;
 
-    const resourceId: string = request.params[options.param];
+    const resourceId: string = request.params[options.param || idName];
 
     const resourceWithoutDb = {
       [idName]: this.moduleOptions.numberIdName
@@ -80,43 +81,28 @@ export class AbilityGuard implements CanActivate {
           if (err instanceof Prisma.PrismaClientValidationError)
             throw new AuthoError(
               "Invalid id property\n" +
+                `${options.param || idName} is not a valid property of ${resourceName}.\n` +
                 "If your id property is not called 'id', " +
                 "make sure to set the numberIdName or the stringIdName option.\n"
             );
+          if (err instanceof Prisma.PrismaClientKnownRequestError)
+            switch (this.moduleOptions.exceptionIfNotFound) {
+              case "not found":
+                throw new NotFoundException(`${resourceName} not found`);
+              case "forbidden":
+                return new ForbiddenException();
+              case "prisma":
+                throw err;
+            }
           throw err;
         });
     }
 
-    const resource = resourceWithDb? resourceWithDb : resourceWithoutDb;
+    const resource = options.useDb ? resourceWithDb : resourceWithoutDb;
 
     const abilityChecker: AbilityChecker =
       this.abilityCheckerBuilder.buildFor(user);
 
-    const hasPermission = abilityChecker.can(
-      action,
-      subject(resourceName, resource)
-    );
-
-    if (!options.useDb) return hasPermission;
-
-    if (!hasPermission) return false;
-
-    if (resourceWithDb) return true;
-
-    // Resource not found, but user has permission
-    switch (this.moduleOptions.exceptionIfNotFound) {
-      case "none":
-        return true;
-      case "http":
-        throw new NotFoundException(`${resourceName} not found`);
-      case "prisma":
-        throw new Prisma.PrismaClientKnownRequestError(
-          `No ${resourceName} found`,
-          {
-            code: "P2025",
-            clientVersion: Prisma.prismaVersion.client,
-          }
-        );
-    }
+    return abilityChecker.can(action, subject(resourceName, resource));
   }
 }

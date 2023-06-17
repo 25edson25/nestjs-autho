@@ -26,7 +26,7 @@ export class AuthoModule {
     >
   ): DynamicModule {
     options.userProperty = options.userProperty || "user";
-    options.exceptionIfNotFound = options.exceptionIfNotFound || "none";
+    options.exceptionIfNotFound = options.exceptionIfNotFound || "not found";
     options.numberIdName = options.stringIdName? undefined: options.numberIdName || "id";
 
     return {
