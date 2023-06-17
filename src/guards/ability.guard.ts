@@ -31,6 +31,8 @@ export class AbilityGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const user = request[this.moduleOptions.userProperty];
+    const abilityChecker: AbilityChecker =
+      this.abilityCheckerBuilder.buildFor(user);
 
     if (!user)
       throw new AuthoError(
@@ -49,62 +51,54 @@ export class AbilityGuard implements CanActivate {
       context.getHandler()
     ) as AbilityMetadata;
 
-    const idName =
+    if (!options.useDb) return abilityChecker.can(action, resourceName);
+
+    const resourceIdName =
       this.moduleOptions.stringIdName || this.moduleOptions.numberIdName;
 
-    const resourceId: string = request.params[options.param || idName];
+    const resourceId: string = request.params[options.param || resourceIdName];
 
-    const resourceWithoutDb = {
-      [idName]: this.moduleOptions.numberIdName
+    const where = {
+      [resourceIdName]: this.moduleOptions.numberIdName
         ? Number(resourceId)
         : resourceId,
     };
 
-    if (!resourceWithoutDb[idName])
+    if (!where[resourceIdName])
       throw new AuthoError(
         "Received id is not compatible with id type.\n" +
           "If you are using a string id, make sure to set the stringIdName option.\n"
       );
 
-    if (!this.prismaService[resourceName] && options.useDb)
+    if (!this.prismaService[resourceName])
       throw new AuthoError(
         `'${resourceName}' name is not a valid Prisma model name\n` +
           "If you are using a custom resource, make sure to set the useDb option to false.\n"
       );
 
-    let resourceWithDb: any;
-    if (options.useDb) {
-      resourceWithDb = await this.prismaService[resourceName]
-        .findUniqueOrThrow({
-          where: resourceWithoutDb,
-        })
-        .catch((err) => {
-          if (err instanceof Prisma.PrismaClientValidationError)
-            throw new AuthoError(
-              "Invalid id property\n" +
-                `${
-                  options.param || idName
-                } is not a valid property of ${resourceName}.\n` +
-                "If your id property is not called 'id', " +
-                "make sure to set the numberIdName or the stringIdName option.\n"
-            );
-          if (err instanceof Prisma.PrismaClientKnownRequestError)
-            switch (this.moduleOptions.exceptionIfNotFound) {
-              case "not found":
-                throw new NotFoundException(`${resourceName} not found`);
-              case "forbidden":
-                return new ForbiddenException();
-              case "prisma":
-                throw err;
-            }
-          throw err;
-        });
-    }
-
-    const resource = options.useDb ? resourceWithDb : resourceWithoutDb;
-
-    const abilityChecker: AbilityChecker =
-      this.abilityCheckerBuilder.buildFor(user);
+    const resource = await this.prismaService[resourceName]
+      .findUniqueOrThrow({
+        where,
+      })
+      .catch((err) => {
+        if (err instanceof Prisma.PrismaClientValidationError)
+          throw new AuthoError(
+            "Invalid id property\n" +
+              `${resourceIdName} is not a valid property of ${resourceName}.\n` +
+              "If your id property is not called 'id', " +
+              "make sure to set the numberIdName or the stringIdName option.\n"
+          );
+        if (err instanceof Prisma.PrismaClientKnownRequestError)
+          switch (this.moduleOptions.exceptionIfNotFound) {
+            case "not found":
+              throw new NotFoundException(`${resourceName} not found`);
+            case "forbidden":
+              return new ForbiddenException();
+            case "prisma":
+              throw err;
+          }
+        throw err;
+      });
 
     return abilityChecker.can(action, subject(resourceName, resource));
   }
