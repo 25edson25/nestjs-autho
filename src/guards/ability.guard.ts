@@ -75,7 +75,7 @@ export class AbilityGuard implements CanActivate {
     let resourceWithDb: any;
     if (options.useDb) {
       resourceWithDb = await this.prismaService[resourceName]
-        .findUnique({
+        .findUniqueOrThrow({
           where: resourceWithoutDb,
         })
         .catch((err) => {
