@@ -50,15 +50,15 @@ export class AbilityGuard implements CanActivate {
     const idName =
       this.moduleOptions.stringIdName || this.moduleOptions.numberIdName;
 
-    let resourceId: string = request.params[options.param];
+    const resourceId: string = request.params[options.param];
 
-    let resource = {
+    const resourceWithoutDb = {
       [idName]: this.moduleOptions.numberIdName
         ? Number(resourceId)
         : resourceId,
     };
 
-    if (!resource[idName])
+    if (!resourceWithoutDb[idName])
       throw new AuthoError(
         "Received id is not compatible with id type.\n" +
           "If you are using a string id, make sure to set the stringIdName option.\n"
@@ -70,10 +70,11 @@ export class AbilityGuard implements CanActivate {
           "If you are using a custom resource, make sure to set the useDb option to false.\n"
       );
 
-    if (options.useDb)
-      resource = await this.prismaService[resourceName]
+    let resourceWithDb: any;
+    if (options.useDb) {
+      resourceWithDb = await this.prismaService[resourceName]
         .findUnique({
-          where: resource,
+          where: resourceWithoutDb,
         })
         .catch((err) => {
           if (err instanceof Prisma.PrismaClientValidationError)
@@ -84,6 +85,9 @@ export class AbilityGuard implements CanActivate {
             );
           throw err;
         });
+    }
+
+    const resource = resourceWithDb? resourceWithDb : resourceWithoutDb;
 
     const abilityChecker: AbilityChecker =
       this.abilityCheckerBuilder.buildFor(user);
@@ -97,7 +101,7 @@ export class AbilityGuard implements CanActivate {
 
     if (!hasPermission) return false;
 
-    if (resource) return true;
+    if (resourceWithDb) return true;
 
     // Resource not found, but user has permission
     switch (this.moduleOptions.exceptionIfNotFound) {
