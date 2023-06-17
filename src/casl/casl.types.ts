@@ -55,11 +55,11 @@ export type Rules<
 > = (args: {
   can: CanWrapper<
     StringOrDefault<Options["actions"], DefaultActions>,
-    StringOrDefault<Options["resources"], DefaultResources>
+    StringOrDefault<Options["resources"] | "all", DefaultResources>
   >;
   cannot: CannotWrapper<
     StringOrDefault<Options["actions"], DefaultActions>,
-    StringOrDefault<Options["resources"], DefaultResources>
+    StringOrDefault<Options["resources"] | "all", DefaultResources>
   >;
   user: JwtPayload;
 }) => void;
