@@ -37,9 +37,11 @@ export class AbilityGuard implements CanActivate {
     if (!user)
       throw new AuthoError(
         "No user found in request object.\n" +
-          `${this.moduleOptions.userProperty} is not a valid property of the request object.\n` +
+          `'${this.moduleOptions.userProperty}' is not a valid property of the request object.\n` +
           "If your user property is not called 'user', " +
-          "make sure to set the userProperty option.\n"
+          "make sure to set the userProperty option.\n" +
+          "Alternatively, ensure that the user is authenticated " +
+          "and attached to the request object.\n"
       );
 
     const {
@@ -58,6 +60,14 @@ export class AbilityGuard implements CanActivate {
 
     const resourceId: string = request.params[options.param || resourceIdName];
 
+    if (!resourceId)
+      throw new AuthoError(
+        "No id found in request object.\n" +
+          `${resourceIdName} is not a valid property of the request params.\n` +
+          "If your param property is not the same as your id property, " +
+          "make sure to set the param option.\n"
+      );
+
     const where = {
       [resourceIdName]: this.moduleOptions.numberIdName
         ? Number(resourceId)
@@ -66,7 +76,7 @@ export class AbilityGuard implements CanActivate {
 
     if (!where[resourceIdName])
       throw new AuthoError(
-        "Received id is not compatible with id type.\n" +
+        "Received id is not compatible with excepted id type.\n" +
           "If you are using a string id, make sure to set the stringIdName option.\n"
       );
 
