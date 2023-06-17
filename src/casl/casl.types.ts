@@ -93,4 +93,9 @@ export type ModuleOptions<
   | { stringIdName?: never; numberIdName?: string }
 );
 
-export class AuthoError extends Error {}
+export class AuthoError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "AuthoError";
+  }
+}
