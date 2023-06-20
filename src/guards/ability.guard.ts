@@ -63,7 +63,9 @@ export class AbilityGuard implements CanActivate {
     if (!resourceId)
       throw new AuthoError(
         "No id found in request object.\n" +
-          `'${resourceId}' is not a valid property of the request params.\n` +
+          `'${
+            options.param || resourceIdName
+          }' is not a valid property of the request params.\n` +
           "If your param property is not the same as your id property, " +
           "make sure to set the param option.\n"
       );
@@ -74,7 +76,8 @@ export class AbilityGuard implements CanActivate {
         : resourceId,
     };
 
-    if (!where[resourceIdName]) // if the id is NaN
+    if (!where[resourceIdName])
+      // if the id is NaN
       throw new AuthoError(
         "Received id is not compatible with excepted id type.\n" +
           "If you are using a string id, make sure to set the stringIdName option.\n"
