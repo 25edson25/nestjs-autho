@@ -31,8 +31,6 @@ export class AbilityGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const user = request[this.moduleOptions.userProperty];
-    const abilityChecker: AbilityChecker =
-      this.abilityCheckerBuilder.buildFor(user);
 
     if (!user)
       throw new AuthoError(
@@ -53,14 +51,17 @@ export class AbilityGuard implements CanActivate {
       context.getHandler()
     ) as AbilityMetadata;
 
+    const abilityChecker: AbilityChecker =
+      this.abilityCheckerBuilder.buildFor(user);
+
     if (!options.useDb) return abilityChecker.can(action, resourceName);
 
     const resourceIdName =
       this.moduleOptions.stringIdName || this.moduleOptions.numberIdName;
 
-    const resourceId: string = request.params[options.param || resourceIdName];
+    const id: string = request.params[options.param || resourceIdName];
 
-    if (!resourceId)
+    if (!id)
       throw new AuthoError(
         "No id found in request object.\n" +
           `'${
@@ -71,9 +72,7 @@ export class AbilityGuard implements CanActivate {
       );
 
     const where = {
-      [resourceIdName]: this.moduleOptions.numberIdName
-        ? Number(resourceId)
-        : resourceId,
+      [resourceIdName]: this.moduleOptions.numberIdName ? Number(id) : id,
     };
 
     if (!where[resourceIdName])
@@ -85,7 +84,7 @@ export class AbilityGuard implements CanActivate {
 
     if (!this.prismaService[resourceName])
       throw new AuthoError(
-        `'${resourceName}' name is not a valid Prisma model name\n` +
+        `'${resourceName}' is not a valid Prisma model name\n` +
           "If you are using a custom resource, make sure to set the useDb option to false.\n"
       );
 
