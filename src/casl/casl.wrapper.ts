@@ -32,7 +32,7 @@ export class AbilityCheckerBuilder {
   }
 
   private cannotWrapper(...args: Parameters<CannotWrapper<any, any>>): CannotReturn {
-    return this.can(...args);
+    return this.cannot(...args);
   }
 
   buildFor(user: any): AbilityChecker {
