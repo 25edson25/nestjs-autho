@@ -75,8 +75,8 @@ export class AbilityGuard implements CanActivate {
       [resourceIdName]: this.moduleOptions.numberIdName ? Number(id) : id,
     };
 
+    // if the id is NaN
     if (!where[resourceIdName])
-      // if the id is NaN
       throw new AuthoError(
         "Received id is not compatible with excepted id type.\n" +
           "If you are using a string id, make sure to set the stringIdName option.\n"
@@ -96,7 +96,7 @@ export class AbilityGuard implements CanActivate {
         if (err instanceof Prisma.PrismaClientValidationError)
           throw new AuthoError(
             "Invalid id property\n" +
-              `${resourceIdName} is not a valid property of ${resourceName}.\n` +
+              `'${resourceIdName}' is not a valid property of ${resourceName}.\n` +
               "If your id property is not called 'id', " +
               "make sure to set the numberIdName or the stringIdName option.\n"
           );
