@@ -1,5 +1,5 @@
 {
-  "name": "@cjr-unb/nest-autho",
+  "name": "@cjr-unb/autho",
   "version": "1.0.0",
   "description": "Module for authorization in NestJS built with CASL",
   "author": "Edson Sales",
