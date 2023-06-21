@@ -15,7 +15,8 @@ type Entities = {
     : never;
 };
 
-export type DefaultResources = keyof Entities;
+
+export type DefaultResources = Exclude<keyof Entities, symbol>;
 export type DefaultActions = "manage" | "create" | "read" | "update" | "delete";
 
 // Wrapper Types
