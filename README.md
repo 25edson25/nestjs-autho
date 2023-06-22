@@ -179,8 +179,6 @@ export class CalculatorController {
   @Ability<CustomOptions>("operate", "calculator")
   @UseGuards(AuthGuard("jwt"))
   @Get()
-
-
   operate() {
     // ...
   }
