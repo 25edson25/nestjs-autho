@@ -102,9 +102,9 @@ export class AbilityGuard implements CanActivate {
           );
         if (err instanceof Prisma.PrismaClientKnownRequestError)
           switch (this.moduleOptions.exceptionIfNotFound) {
-            case "not found":
+            case "404":
               throw new NotFoundException(`${resourceName} not found`);
-            case "forbidden":
+            case "403":
               return new ForbiddenException();
             case "prisma":
               throw err;

@@ -73,7 +73,7 @@ export type AbilityMetadata = {
   options?: AbilityDecoratorOptions;
 };
 
-export type ExceptionIfNotFound = "not found" | "prisma" | "forbidden" ;
+export type ExceptionIfNotFound = "404" | "403" |"prisma"  ;
 
 export type ModuleOptions<
   JwtPayload,
