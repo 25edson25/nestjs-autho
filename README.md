@@ -1,3 +1,5 @@
+[![pt-br](https://img.shields.io/badge/lang-pt--br-green.svg)](https://github.com/CJR-UnB/autho/blob/main/README.pt-br.md)
+
 # @cjr-unb/autho
 
 Module for authorization in NestJS built with CASL and integrated with Prisma.
