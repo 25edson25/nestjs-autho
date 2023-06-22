@@ -54,7 +54,7 @@ export class AbilityGuard implements CanActivate {
     const abilityChecker: AbilityChecker =
       this.abilityCheckerBuilder.buildFor(user);
 
-    if (!options.useDb) return abilityChecker.can(action, resourceName);
+    if (!options.useDb) return abilityChecker.can(action, subject(resourceName, {}));
 
     const resourceIdName =
       this.moduleOptions.stringIdName || this.moduleOptions.numberIdName;
