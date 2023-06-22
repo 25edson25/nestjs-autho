@@ -6,6 +6,10 @@
   "license": "MIT",
   "main": "dist/index.js",
   "types":"dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CJR-UnB/autho.git"
+  },
   "scripts": {
     "build": "rimraf dist && tsc",
     "prepare":"npm run build"
