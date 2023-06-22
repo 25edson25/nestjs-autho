@@ -115,7 +115,7 @@ Agora quando um usuário que não tem permissão tentar acessar a rota, uma exce
 
 ## Definindo Actions e Resources Customizados
 
-É possível definir seus próprios actions e resources customizados criando um tipo que contém as propriedades _action_ e _resource_ e passando esse tipo como parâmetro para a função rules, para o decorator @Ability e para o AuthoModule.
+É possível definir seus próprios actions e resources customizados criando um tipo que contém as propriedades _action_ e _resource_ e passando esse tipo como parâmetro para a função rules, para o AuthoModule e para o decorator Ability.
 
 Você pode extender as Actions e Resources padrões através dos tipos _DefaultActions_ e _DefaultResources_.
 
@@ -128,6 +128,7 @@ export type CustomOptions = {
 };
 ```
 
+Na função rules:
 ```typescript
 import { Rules } from "@cjr-unb/nest-autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
@@ -142,6 +143,7 @@ export const rules: Rules<JwtPayload, CustomOptions> = ({
 };
 ```
 
+No AuthoModule:
 ```typescript
 import { AuthoModule } from "@cjr-unb/nest-autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
@@ -161,6 +163,7 @@ import { CustomOptions } from "./custom-options";
 export class AppModule {}
 ```
 
+No decorator Ability:
 ```typescript
 import { Ability } from "@cjr-unb/nest-autho";
 import { Controller, Get, UseGuards } from "@nestjs/common";

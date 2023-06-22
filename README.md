@@ -119,7 +119,7 @@ Now, when a user who doesn't have permission tries to access the route, a _Forbi
 
 ## Defining Custom Actions and Resources
 
-You can define your own custom actions and resources by creating a type that contains the _action_ and _resource_ properties and passing that type as a parameter to the rules function, the @Ability decorator, and the AuthoModule.
+You can define your own custom actions and resources by creating a type that contains the _action_ and _resource_ properties and passing that type as a parameter to the rules function, the AuthoModule and the Ability decorator.
 
 You can extend the default Actions and Resources using the _DefaultActions_ and _DefaultResources_ types.
 
@@ -132,6 +132,7 @@ export type CustomOptions = {
 };
 ```
 
+In the rules function:
 ```typescript
 import { Rules } from "@cjr-unb/nest-autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
@@ -146,6 +147,7 @@ export const rules: Rules<JwtPayload, CustomOptions> = ({
 };
 ```
 
+In the AuthoModule:
 ```typescript
 import { AuthoModule } from "@cjr-unb/nest-autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
@@ -165,6 +167,7 @@ import { CustomOptions } from "./custom-options";
 export class AppModule {}
 ```
 
+In the Ability decorator:
 ```typescript
 import { Ability } from "@cjr-unb/nest-autho";
 import { Controller, Get, UseGuards } from "@nestjs/common";
