@@ -12,7 +12,7 @@ npm install @cjr-unb/autho
 
 # Como usar
 
-## Definindo as regras
+## Definindo Regras
 
 Defina as regras de autorização da sua aplicação numa função de callback do tipo Rules. Essa função recebe o tipo do usuário armazenado no token JWT e um objeto com as propriedades _can_, _cannot_ e _user_.
 
