@@ -46,7 +46,7 @@ Add the AuthoModule using the forRoot method in one of your application's module
   - **PrismaModule:** Prisma module that should export the PrismaService
   - **rules:** Callback function that contains the authentication rules. Receives an object with the properties _can_, _cannot_, and _user_.
   - **userProperty?:** Name of the property that contains the authenticated user in the request. Default: _user_
-  - **exceptionIfNotFound?:** Type of exception to be thrown if the resource is not found in the database. Possible values are: _not found_, _forbidden_, and _prisma_. Default: _not found_
+  - **exceptionIfNotFound?:** Type of exception to be thrown if the resource is not found in the database. Possible values are: _404_, _403_, and _prisma_. Default: _404_
   - **numberIdName?:** Name of the property that contains the resource ID in Prisma. Should be used when the resource ID is a number. You must choose between _numberIdName_ and _stringIdName_.
     Default: _id_
   - **stringIdName?:** Name of the property that contains the resource ID in Prisma. Should be used when the resource ID is a string. You must choose between _numberIdName_ and _stringIdName_. Default: _undefined_
