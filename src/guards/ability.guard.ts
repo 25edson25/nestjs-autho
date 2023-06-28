@@ -51,10 +51,21 @@ export class AbilityGuard implements CanActivate {
       context.getHandler()
     ) as AbilityMetadata;
 
+    const unauthorizedMessage =
+      this.moduleOptions.customUnauthorizedMessage?.call(
+        undefined,
+        action as any,
+        resourceName as any
+      ) || "Forbidden resource";
+
     const abilityChecker: AbilityChecker =
       this.abilityCheckerBuilder.buildFor(user);
 
-    if (!options.useDb) return abilityChecker.can(action, subject(resourceName, {}));
+    if (!options.useDb)
+      if (abilityChecker.can(action, subject(resourceName, {})))
+        return true;
+      else
+        throw new ForbiddenException(unauthorizedMessage);
 
     const resourceIdName =
       this.moduleOptions.stringIdName || this.moduleOptions.numberIdName;
@@ -112,6 +123,9 @@ export class AbilityGuard implements CanActivate {
         throw err;
       });
 
-    return abilityChecker.can(action, subject(resourceName, resource));
+    if (abilityChecker.can(action, subject(resourceName, resource)))
+      return true;
+    else
+      throw new ForbiddenException(unauthorizedMessage);
   }
 }

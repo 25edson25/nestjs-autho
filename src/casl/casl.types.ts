@@ -15,7 +15,6 @@ type Entities = {
     : never;
 };
 
-
 export type DefaultResources = Exclude<keyof Entities, symbol>;
 export type DefaultActions = "manage" | "create" | "read" | "update" | "delete";
 
@@ -73,7 +72,14 @@ export type AbilityMetadata = {
   options?: AbilityDecoratorOptions;
 };
 
-export type ExceptionIfNotFound = "404" | "403" | "prisma"  ;
+export type ExceptionIfNotFound = "404" | "403" | "prisma";
+
+export type CustomUnauthorizedMessage <
+  Options extends AbilityOptions = DefaultAbilityOptions
+> = (
+  action: StringOrDefault<Options["actions"], DefaultActions>,
+  resource: StringOrDefault<Options["resources"], DefaultResources>
+) => string;
 
 export type ModuleOptions<
   JwtPayload,
@@ -89,6 +95,7 @@ export type ModuleOptions<
   >;
   userProperty?: string;
   exceptionIfNotFound?: ExceptionIfNotFound;
+  customUnauthorizedMessage?: CustomUnauthorizedMessage<Options>;
 } & (
   | { stringIdName?: string; numberIdName?: never }
   | { stringIdName?: never; numberIdName?: string }
