@@ -4,5 +4,6 @@ export {
   Rules,
   DefaultActions,
   DefaultResources,
-  AuthoError
+  AuthoError,
+  ForbiddenMessage
 } from "./casl/casl.types";

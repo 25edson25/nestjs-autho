@@ -52,7 +52,7 @@ export class AbilityGuard implements CanActivate {
     ) as AbilityMetadata;
 
     const unauthorizedMessage =
-      this.moduleOptions.customUnauthorizedMessage?.call(
+      this.moduleOptions.forbiddenMessage?.call(
         undefined,
         action as any,
         resourceName as any
@@ -116,7 +116,7 @@ export class AbilityGuard implements CanActivate {
             case "404":
               throw new NotFoundException(`${resourceName} not found`);
             case "403":
-              return new ForbiddenException();
+              return new ForbiddenException(unauthorizedMessage);
             case "prisma":
               throw err;
           }

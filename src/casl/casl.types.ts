@@ -74,7 +74,7 @@ export type AbilityMetadata = {
 
 export type ExceptionIfNotFound = "404" | "403" | "prisma";
 
-export type CustomUnauthorizedMessage <
+export type ForbiddenMessage <
   Options extends AbilityOptions = DefaultAbilityOptions
 > = (
   action: StringOrDefault<Options["actions"], DefaultActions>,
@@ -95,7 +95,7 @@ export type ModuleOptions<
   >;
   userProperty?: string;
   exceptionIfNotFound?: ExceptionIfNotFound;
-  customUnauthorizedMessage?: CustomUnauthorizedMessage<Options>;
+  forbiddenMessage?: ForbiddenMessage<Options>;
 } & (
   | { stringIdName?: string; numberIdName?: never }
   | { stringIdName?: never; numberIdName?: string }
