@@ -1,6 +1,7 @@
 import { DynamicModule, Global, Module } from "@nestjs/common";
 import {
   AbilityOptions,
+  AuthoError,
   DefaultAbilityOptions,
   DefaultActions,
   DefaultResources,
@@ -9,6 +10,7 @@ import {
 } from "./casl.types";
 import { AbilityCheckerBuilder } from "./casl.wrapper";
 import { PROVIDERS } from "./casl.constants";
+import { PrismaClient } from "@prisma/client";
 
 @Global()
 @Module({})
@@ -29,6 +31,14 @@ export class AuthoModule {
     options.exceptionIfNotFound = options.exceptionIfNotFound || "404";
     options.numberIdName = options.stringIdName? undefined: options.numberIdName || "id";
 
+    const PrismaService = Reflect.getMetadata(
+      "providers",
+      options.PrismaModule
+    )?.[0];
+
+    if (!(PrismaService?.prototype instanceof PrismaClient))
+      throw new AuthoError("PrismaModule must export a service that extends PrismaClient")
+
     return {
       module: AuthoModule,
       imports: [options.PrismaModule],
@@ -39,10 +49,7 @@ export class AuthoModule {
         },
         {
           provide: PROVIDERS.PRISMA_SERVICE,
-          useExisting: Reflect.getMetadata(
-            "providers",
-            options.PrismaModule
-          )[0],
+          useExisting: PrismaService,
         },
         {
           provide: PROVIDERS.ABILITY_CHECKER_BUILDER,
@@ -52,10 +59,7 @@ export class AuthoModule {
       exports: [
         {
           provide: PROVIDERS.PRISMA_SERVICE,
-          useExisting: Reflect.getMetadata(
-            "providers",
-            options.PrismaModule
-          )[0],
+          useExisting: PrismaService,
         },
         {
           provide: PROVIDERS.ABILITY_CHECKER_BUILDER,
