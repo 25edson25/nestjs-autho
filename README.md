@@ -27,7 +27,7 @@ export const rules: Rules<JwtPayload> = ({ can, cannot, user }) => {
 
   if (user.roles.includes("admin")) can("manage", "all");
 
-  can("read", "post", { authorId: user.id });
+  can("update", "post", { authorId: user.id });
 };
 ```
 
