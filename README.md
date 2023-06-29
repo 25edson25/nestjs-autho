@@ -47,7 +47,7 @@ Add the AuthoModule using the forRoot method in one of your application's module
   - **rules:** Callback function that contains the authentication rules. Receives an object with the properties _can_, _cannot_, and _user_.
   - **userProperty?:** Name of the property that contains the authenticated user in the request object. Default: _user_.
   - **exceptionIfNotFound?:** Type of exception to be thrown if the resource is not found in the database. Possible values are: _404_, _403_, and _prisma_. Default: _404_.
-  - **forbiddenMessage?:** Function that receives the name of the action and resource that the user does not have permission to access, and returns the message to be displayed in the exception. If not defined, the message "Forbidden resource" will be displayed. Default: __undefined__.
+  - **forbiddenMessage?:** Function that receives the name of the action and resource that the user does not have permission to access, and returns the message to be displayed in the exception. If not defined, the message "Forbidden resource" will be displayed. Default: _undefined_.
   - **numberIdName?:** Name of the property that contains the resource ID in Prisma. Should be used when the resource ID is a number. You must choose between _numberIdName_ and _stringIdName_.
     Default: _id_.
   - **stringIdName?:** Name of the property that contains the resource ID in Prisma. Should be used when the resource ID is a string. You must choose between _numberIdName_ and _stringIdName_. Default: _undefined_.
