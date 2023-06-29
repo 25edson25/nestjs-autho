@@ -19,7 +19,7 @@ npm install @cjr-unb/autho
 Define the authorization rules for your application in a callback function of type Rules. This function receives the type of user stored in the JWT token and an object with the properties _can_, _cannot_, and _user_.
 
 ```typescript
-import { Rules } from "@cjr-unb/nest-autho";
+import { Rules } from "@cjr-unb/autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
 
 export const rules: Rules<JwtPayload> = ({ can, cannot, user }) => {
@@ -53,7 +53,7 @@ Add the AuthoModule using the forRoot method in one of your application's module
   - **stringIdName?:** Name of the property that contains the resource ID in Prisma. Should be used when the resource ID is a string. You must choose between _numberIdName_ and _stringIdName_. Default: _undefined_.
 
 ```typescript
-import { AuthoModule } from "@cjr-unb/nest-autho";
+import { AuthoModule } from "@cjr-unb/autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -75,7 +75,7 @@ export class AppModule {}
 Now you can use the @Ability decorator on any route of your application. The decorator receives the action the user is trying to perform, the name of the resource they are trying to access, and additional options.
 
 ```typescript
-import { Ability } from "@cjr-unb/nest-autho";
+import { Ability } from "@cjr-unb/autho";
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -99,7 +99,7 @@ If the property name in your route that contains the resource ID is different fr
 If the resource is not found, Autho will throw an exception of the type defined in the _exceptionIfNotFound_ option.
 
 ```typescript
-import { Ability } from "@cjr-unb/nest-autho";
+import { Ability } from "@cjr-unb/autho";
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -123,7 +123,7 @@ You can define your own custom actions and resources by creating a type that con
 You can extend the default Actions and Resources using the _DefaultActions_ and _DefaultResources_ types.
 
 ```typescript
-import { DefaultActions, DefaultResources } from "@cjr-unb/nest-autho";
+import { DefaultActions, DefaultResources } from "@cjr-unb/autho";
 
 export type CustomOptions = {
   actions: "operate" | DefaultActions;
@@ -133,7 +133,7 @@ export type CustomOptions = {
 
 In the rules function:
 ```typescript
-import { Rules } from "@cjr-unb/nest-autho";
+import { Rules } from "@cjr-unb/autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
 import { CustomOptions } from "./custom-options";
 
@@ -148,7 +148,7 @@ export const rules: Rules<JwtPayload, CustomOptions> = ({
 
 In the AuthoModule:
 ```typescript
-import { AuthoModule } from "@cjr-unb/nest-autho";
+import { AuthoModule } from "@cjr-unb/autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -168,7 +168,7 @@ export class AppModule {}
 
 In the Ability decorator:
 ```typescript
-import { Ability } from "@cjr-unb/nest-autho";
+import { Ability } from "@cjr-unb/autho";
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { CustomOptions } from "./custom-options";

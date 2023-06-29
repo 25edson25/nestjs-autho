@@ -17,7 +17,7 @@ npm install @cjr-unb/autho
 Defina as regras de autorização da sua aplicação numa função de callback do tipo Rules. Essa função recebe o tipo do usuário armazenado no token JWT e um objeto com as propriedades _can_, _cannot_ e _user_.
 
 ```typescript
-import { Rules } from "@cjr-unb/nest-autho";
+import { Rules } from "@cjr-unb/autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
 
 export const rules: Rules<JwtPayload> = ({ can, cannot, user }) => {
@@ -51,7 +51,7 @@ Adicione o AuthoModule utilizando o método forRoot em um dos módulos da sua ap
   - **stringIdName?:** Nome da propriedade que contém o id do recurso no Prisma. Deve ser utilizado quando o id do recurso é uma string. Você deve escolher entre _numberIdName_ e _stringIdName_. Default: _undefined_.
 
 ```typescript
-import { AuthoModule } from "@cjr-unb/nest-autho";
+import { AuthoModule } from "@cjr-unb/autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -73,7 +73,7 @@ export class AppModule {}
 Agora você pode utilizar o decorator @Ability em qualquer rota da sua aplicação. O decorator recebe a ação que o usuário está tentando executa, o nome do recurso que ele está tentando acessar e opções adicionais.
 
 ```typescript
-import { Ability } from "@cjr-unb/nest-autho";
+import { Ability } from "@cjr-unb/autho";
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -97,7 +97,7 @@ Se na sua rota, o nome da propriedade que contém o id do recurso no for diferen
 Caso o recurso não seja encontrado, o Autho lançará uma exceção do tipo definido na opção _exceptionIfNotFound_.
 
 ```typescript
-import { Ability } from "@cjr-unb/nest-autho";
+import { Ability } from "@cjr-unb/autho";
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -121,7 +121,7 @@ Agora quando um usuário que não tem permissão tentar acessar a rota, uma exce
 Você pode extender as Actions e Resources padrões através dos tipos _DefaultActions_ e _DefaultResources_.
 
 ```typescript
-import { DefaultActions, DefaultResources } from "@cjr-unb/nest-autho";
+import { DefaultActions, DefaultResources } from "@cjr-unb/autho";
 
 export type CustomOptions = {
   actions: "operate" | DefaultActions;
@@ -131,7 +131,7 @@ export type CustomOptions = {
 
 Na função rules:
 ```typescript
-import { Rules } from "@cjr-unb/nest-autho";
+import { Rules } from "@cjr-unb/autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
 import { CustomOptions } from "./custom-options";
 
@@ -146,7 +146,7 @@ export const rules: Rules<JwtPayload, CustomOptions> = ({
 
 No AuthoModule:
 ```typescript
-import { AuthoModule } from "@cjr-unb/nest-autho";
+import { AuthoModule } from "@cjr-unb/autho";
 import { JwtPayload } from "./auth/dtos/jwt-payload.dto";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -166,7 +166,7 @@ export class AppModule {}
 
 No decorator Ability:
 ```typescript
-import { Ability } from "@cjr-unb/nest-autho";
+import { Ability } from "@cjr-unb/autho";
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { CustomOptions } from "./custom-options";
