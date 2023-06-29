@@ -41,15 +41,16 @@ The rules are defined as described in the [CASL documentation](https://casl.js.o
 
 Add the AuthoModule using the forRoot method in one of your application's modules. The arguments that the method receives are:
 
-- **\<JwtPayload\>:** Type of user stored in the JWT token
+- **\<JwtPayload\>:** Type of user stored in the JWT token.
 - Options:
   - **PrismaModule:** Prisma module that should export the PrismaService
   - **rules:** Callback function that contains the authentication rules. Receives an object with the properties _can_, _cannot_, and _user_.
-  - **userProperty?:** Name of the property that contains the authenticated user in the request. Default: _user_
-  - **exceptionIfNotFound?:** Type of exception to be thrown if the resource is not found in the database. Possible values are: _404_, _403_, and _prisma_. Default: _404_
+  - **userProperty?:** Name of the property that contains the authenticated user in the request object. Default: _user_.
+  - **exceptionIfNotFound?:** Type of exception to be thrown if the resource is not found in the database. Possible values are: _404_, _403_, and _prisma_. Default: _404_.
+  - **forbiddenMessage?:** Function that receives the name of the action and resource that the user does not have permission to access, and returns the message to be displayed in the exception. If not defined, the message "Forbidden resource" will be displayed. Default: __undefined__.
   - **numberIdName?:** Name of the property that contains the resource ID in Prisma. Should be used when the resource ID is a number. You must choose between _numberIdName_ and _stringIdName_.
-    Default: _id_
-  - **stringIdName?:** Name of the property that contains the resource ID in Prisma. Should be used when the resource ID is a string. You must choose between _numberIdName_ and _stringIdName_. Default: _undefined_
+    Default: _id_.
+  - **stringIdName?:** Name of the property that contains the resource ID in Prisma. Should be used when the resource ID is a string. You must choose between _numberIdName_ and _stringIdName_. Default: _undefined_.
 
 ```typescript
 import { AuthoModule } from "@cjr-unb/nest-autho";
@@ -75,9 +76,7 @@ Now you can use the @Ability decorator on any route of your application. The dec
 
 ```typescript
 import { Ability } from "@cjr-unb/nest-autho";
-import { Controller, Get
-
-, UseGuards } from "@nestjs/common";
+import { Controller, Get, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
 @Controller("post")
@@ -119,7 +118,7 @@ Now, when a user who doesn't have permission tries to access the route, a _Forbi
 
 ## Defining Custom Actions and Resources
 
-You can define your own custom actions and resources by creating a type that contains the _action_ and _resource_ properties and passing that type as a parameter to the rules function, the AuthoModule and the Ability decorator.
+You can define your own custom actions and resources by creating a type that contains the _action_ and _resource_ properties and passing that type as a parameter  to the rules function for the AuthoModule, to the Ability decorator, and to the forbiddenMessage function if it is defined.
 
 You can extend the default Actions and Resources using the _DefaultActions_ and _DefaultResources_ types.
 

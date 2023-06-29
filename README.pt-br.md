@@ -39,15 +39,16 @@ A definição das regras é feita como descrito na documentação do [CASL](http
 
 Adicione o AuthoModule utilizando o método forRoot em um dos módulos da sua aplicação. Os argumentos que o método recebe são:
 
-- **\<JwtPayload\>:** Tipo do usuário armazenado no token JWT
+- **\<JwtPayload\>:** Tipo do usuário armazenado no token JWT.
 - Options:
   - **PrismaModule:** Módulo do prisma que deve exportar o PrismaService
   - **rules:** Função de callback que contém as regras de autenticação. Recebe um objeto com as propriedades _can_, _cannot_ e _user_.
-  - **userProperty?:** Nome da propriedade que contém o usuário autenticado noh request. Default: _user_
-  - **exceptionIfNotFound?:** Tipo de exceção que deve ser lançada caso o recurso não seja encontrado no banco de dados. Os possíveis valores são: _404_, _403_ e _prisma_. Default: _not found_
+  - **userProperty?:** Nome da propriedade que contém o usuário autenticado no objeto request. Default: _user_.
+  - **exceptionIfNotFound?:** Tipo de exceção que deve ser lançada caso o recurso não seja encontrado no banco de dados. Os possíveis valores são: _404_, _403_ e _prisma_. Default: _not found_.
+  - **forbiddenMessage?:** Função que recebe o nome da action e do resource que o usuário não tem permissão para acessar e retorna a mensagem que deve ser exibida na exceção. Caso não seja definida, a mensagem "Forbidden resource" será exibida. Default: _undefined_.
   - **numberIdName?:** Nome da propriedade que contém o id do recurso no Prisma. Deve ser utilizado quando o id do recurso é um número. Você deve escolher entre _numberIdName_ e _stringIdName_.
-    Default: _id_
-  - **stringIdName?:** Nome da propriedade que contém o id do recurso no Prisma. Deve ser utilizado quando o id do recurso é uma string. Você deve escolher entre _numberIdName_ e _stringIdName_. Default: _undefined_
+    Default: _id_.
+  - **stringIdName?:** Nome da propriedade que contém o id do recurso no Prisma. Deve ser utilizado quando o id do recurso é uma string. Você deve escolher entre _numberIdName_ e _stringIdName_. Default: _undefined_.
 
 ```typescript
 import { AuthoModule } from "@cjr-unb/nest-autho";
@@ -115,7 +116,7 @@ Agora quando um usuário que não tem permissão tentar acessar a rota, uma exce
 
 ## Definindo Actions e Resources Customizados
 
-É possível definir seus próprios actions e resources customizados criando um tipo que contém as propriedades _action_ e _resource_ e passando esse tipo como parâmetro para a função rules, para o AuthoModule e para o decorator Ability.
+É possível definir seus próprios actions e resources customizados criando um tipo que contém as propriedades _action_ e _resource_ e passando esse tipo como parâmetro para a função rules, para o AuthoModule, para o decorator Ability e para a função forbiddenMessage caso ela seja definida.
 
 Você pode extender as Actions e Resources padrões através dos tipos _DefaultActions_ e _DefaultResources_.
 
